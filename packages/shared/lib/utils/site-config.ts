@@ -8,7 +8,6 @@ export type SiteConfig = {
   loadDetectionSelector?: string;
   messageSelector: string;
   fields: FieldExtractor[];
-  textFormat: string;
   pollingInterval?: number;
 };
 export type SiteId = (typeof siteConfigs)[number]['id'];
@@ -24,7 +23,6 @@ export const siteConfigs = [
       { name: 'name', selector: '#author-name' },
       { name: 'body', selector: '#message' },
     ],
-    textFormat: '%(name) %(body)',
   },
   {
     id: 'twitch',
@@ -37,7 +35,6 @@ export const siteConfigs = [
       { name: 'name', selector: '.chat-author__display-name' },
       { name: 'body', selector: '[data-a-target="chat-line-message-body"]' },
     ],
-    textFormat: '%(name) %(body)',
   },
 ] as const satisfies SiteConfig[];
 

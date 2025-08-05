@@ -65,6 +65,15 @@
   "voiceVolume": {
     "message": "音量"
   },
+  "speechTemplate": {
+    "message": "読み上げテンプレート"
+  },
+  "speechTemplateDescription": {
+    "message": "メッセージの読み上げ方をカスタマイズできます。変数 %(name) はユーザー名に、 %(body) は本文に置き換えられます。"
+  },
+  "invalidFieldNames": {
+    "message": "読み上げテンプレートエラー: 変数 $1 は存在しません。"
+  },
   "openPage": {
     "message": "$1を開く"
   },

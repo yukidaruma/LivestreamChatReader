@@ -4,6 +4,8 @@ import { ttsVolumeStorage } from '@extension/storage';
 import type { logger as loggerType } from './logger.js';
 import type { BackgroundRequest, TTSSpeakRequest, InferBackgroundResponse } from './message-types.js';
 
+export const DEFAULT_SPEECH_TEMPLATE = '%(name) %(body)';
+
 export type FieldExtractor = {
   name: string;
   selector: string;
@@ -35,7 +37,7 @@ export const extractFieldValues = (element: Element, fields: FieldExtractor[]): 
 };
 
 export const formatText = (format: string, fields: Record<string, string>): string =>
-  format.replace(/%\((\w+)\)/g, (_match, fieldName) => fields[fieldName]);
+  format.replace(/%\((\w+)\)/g, (_match, fieldName) => fields[fieldName] ?? '');
 
 export const normalizeWhitespaces = (text: string): string => text.replace(/\s+/g, ' ').trim();
 

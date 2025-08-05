@@ -149,6 +149,7 @@ export const createStorage = <D = string>(
   }
 
   return {
+    key,
     get,
     set,
     getSnapshot,

@@ -65,6 +65,15 @@
   "voiceVolume": {
     "message": "Voice Volume"
   },
+  "speechTemplate": {
+    "message": "Speech Template"
+  },
+  "speechTemplateDescription": {
+    "message": "Customize how messages are spoken. Use variables %(name) for username and %(body) for message content."
+  },
+  "invalidFieldNames": {
+    "message": "Error in speech template: the variable $1 is invalid."
+  },
   "openPage": {
     "message": "Open $1"
   },

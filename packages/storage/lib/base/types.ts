@@ -4,6 +4,7 @@ import type { StorageEnum } from './index.js';
 export type ValueOrUpdateType<D> = D | ((prev: D) => Promise<D> | D);
 
 export type BaseStorageType<D> = {
+  key: string;
   get: () => Promise<D>;
   set: (value: ValueOrUpdateType<D>) => Promise<void>;
   getSnapshot: () => D | null;
@@ -91,13 +92,6 @@ export type LogStorageType = BaseStorageType<LogStateType> & {
   getRecentLogs: (count?: number) => Promise<LogEntry[]>;
 };
 
-// theme-storage.ts
-export type ThemeStateType = {
-  theme: 'light' | 'dark';
-  isLight: boolean;
-};
-export type ThemeStorageType = ToggleStorageType<ThemeStateType>;
-
 // text-filter-storage.ts
 export type BaseTextFilter = {
   id: number;
@@ -132,6 +126,14 @@ export type TextFilterStorageType = BaseStorageType<TextFilterStateType> & {
   updateFilter: (id: number, updates: Partial<Omit<TextFilter, 'id'>>) => Promise<void>;
 };
 
+// speech-template-storage.ts
+export type SpeechTemplateStateType = {
+  template: string | null; // Template string like "%(name) %(body)"
+};
+export type SpeechTemplateStorageType = BaseStorageType<SpeechTemplateStateType> & {
+  setTemplate: (template: string | null) => Promise<void>;
+};
+
 // tts-voice-engine-storage.ts
 export type TtsVoiceEngineStateType = {
   uri: string | null; // Voice URI like "Microsoft Ayumi - Japanese (Japan)" or "Google 日本語"
@@ -139,6 +141,13 @@ export type TtsVoiceEngineStateType = {
 export type TtsVoiceEngineStorageType = BaseStorageType<TtsVoiceEngineStateType> & {
   setUri: (uri: string | null) => Promise<void>;
 };
+
+// theme-storage.ts
+export type ThemeStateType = {
+  theme: 'light' | 'dark';
+  isLight: boolean;
+};
+export type ThemeStorageType = ToggleStorageType<ThemeStateType>;
 
 // tts-volume-storage.ts
 export type TtsVolumeStateType = {

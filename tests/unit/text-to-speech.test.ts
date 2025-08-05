@@ -110,9 +110,9 @@ describe('Text-to-Speech Utility Functions', () => {
     });
 
     // Note: This should not happen in a real application
-    it('should replace missing fields with undefined', () => {
+    it('should replace missing fields with empty string', () => {
       const result = formatText('%(name): %(body)', { name: 'Donut' });
-      assert.equal(result, 'Donut: undefined');
+      assert.equal(result, 'Donut: ');
     });
 
     it('should handle empty format string', () => {

@@ -9,29 +9,51 @@ import {
   withErrorBoundary,
   withSuspense,
 } from '@extension/shared';
-import { speakText } from '@extension/shared/lib/utils';
+import { DEFAULT_SPEECH_TEMPLATE, speakText } from '@extension/shared/lib/utils';
 import {
   exampleThemeStorage,
   extensionEnabledStorage,
   languageStorage,
+  speechTemplateStorage,
   ttsVoiceEngineStorage,
   ttsVolumeStorage,
 } from '@extension/storage';
 import { cn, ErrorDisplay, getIconColor, LoadingSpinner, ToggleButton } from '@extension/ui';
 import * as icons from '@extension/ui/lib/icons';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+// Valid field names that can be used in speech templates
+const VALID_FIELD_NAMES = ['name', 'body'];
+
+const validateSpeechTemplate = (template: string): string[] | null => {
+  const fieldNameMatches = template.match(/%\((\w*)\)/g);
+
+  if (!fieldNameMatches) {
+    return null;
+  }
+
+  const extractedFieldNames = fieldNameMatches.map(match => match.replace(/%\((\w*)\)/, '$1'));
+
+  const invalidFieldNames = [...new Set(extractedFieldNames)].filter(name => !VALID_FIELD_NAMES.includes(name));
+
+  return invalidFieldNames.length > 0 ? invalidFieldNames : null;
+};
 
 const Options = () => {
   const { isLight } = useStorage(exampleThemeStorage);
   const { enabled } = useStorage(extensionEnabledStorage);
   const { language } = useStorage(languageStorage);
+  const { template: speechTemplate } = useStorage(speechTemplateStorage);
   const { volume: storedVolume } = useStorage(ttsVolumeStorage);
   const { uri: voiceURI } = useStorage(ttsVoiceEngineStorage);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [localVolume, setLocalVolume] = useState(storedVolume);
+  const [localSpeechTemplate, setLocalSpeechTemplate] = useState(speechTemplate ?? '');
   const [isTestingVoice, setIsTestingVoice] = useState(false);
   const currentVolumeRef = useRef(storedVolume);
   const cancelTestSpeechRef = useRef<(() => void) | null>(null);
+
+  const invalidFieldNames = useMemo(() => validateSpeechTemplate(localSpeechTemplate), [localSpeechTemplate]);
 
   // Check if we're in inline mode (embedded in iframe)
   const isInline = new URLSearchParams(window.location.search).has('inline');
@@ -47,6 +69,10 @@ const Options = () => {
   const debouncedVolumeUpdate = useDebounce((newVolume: number) => {
     ttsVolumeStorage.setVolume(newVolume);
   }, 300);
+  const debouncedSpeechTemplateUpdate = useDebounce((newTemplate: string) => {
+    // Set the template to `null` if the input is blank
+    speechTemplateStorage.setTemplate(newTemplate?.trim() || null);
+  }, 300);
 
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(event.target.value);
@@ -54,6 +80,11 @@ const Options = () => {
     currentVolumeRef.current = newVolume; // Update the ref to track current volume
     setLocalVolume(newVolume); // Update UI immediately
     debouncedVolumeUpdate(newVolume); // Debounce storage write
+  };
+  const handleSpeechTemplateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newTemplate = event.target.value;
+    setLocalSpeechTemplate(newTemplate); // Update UI immediately
+    debouncedSpeechTemplateUpdate(newTemplate); // Debounce storage write
   };
 
   const handleVoiceEngineChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -104,10 +135,13 @@ const Options = () => {
     };
   }, []);
 
-  // Sync local volume with storage changes
+  // Sync local value with storage changes
   useEffect(() => {
     setLocalVolume(storedVolume);
   }, [storedVolume]);
+  useEffect(() => {
+    setLocalSpeechTemplate(speechTemplate ?? '');
+  }, [speechTemplate]);
 
   // Cancel test voice when extension is disabled
   useEffect(() => {
@@ -190,6 +224,27 @@ const Options = () => {
               className="w-72"
             />
             <span className="w-12 text-sm font-medium">{Math.round(localVolume * 100)}%</span>
+          </div>
+        </div>
+        <div>
+          <h2>{t('speechTemplate')}</h2>
+          <div className="space-y-2">
+            <input
+              type="text"
+              value={localSpeechTemplate}
+              onChange={handleSpeechTemplateChange}
+              placeholder={DEFAULT_SPEECH_TEMPLATE}
+              className={cn(
+                'text-secondary bg-secondary border-primary w-full rounded border px-3 py-2',
+                invalidFieldNames && 'border-red-500 focus:border-red-500 focus:ring-red-500',
+              )}
+            />
+            <div>
+              <p className="text-secondary text-sm">{t('speechTemplateDescription')}</p>
+              <p className={cn('text-xs', !invalidFieldNames ? 'invisible' : 'text-red-500')}>
+                {invalidFieldNames && t('invalidFieldNames', invalidFieldNames.map(name => `%(${name})`).join(', '))}
+              </p>
+            </div>
           </div>
         </div>
 

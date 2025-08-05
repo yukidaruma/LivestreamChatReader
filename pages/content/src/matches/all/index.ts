@@ -1,5 +1,6 @@
 import { waitForElementAppearance, waitForElementRemoval } from './dom-util';
 import {
+  DEFAULT_SPEECH_TEMPLATE,
   logger,
   formatText,
   extractFieldValues,
@@ -9,8 +10,14 @@ import {
   initWebDriverShim,
 } from '@extension/shared/lib/utils';
 import { applyTextFilters } from '@extension/shared/lib/utils/text-filter';
-import { extensionEnabledStorage, textFilterStorage, ttsVoiceEngineStorage } from '@extension/storage';
+import {
+  extensionEnabledStorage,
+  speechTemplateStorage,
+  textFilterStorage,
+  ttsVoiceEngineStorage,
+} from '@extension/storage';
 import type { SiteConfig, SiteId } from '@extension/shared/lib/utils/site-config';
+import type { TextFilter } from '@extension/storage/lib/base';
 
 logger.log('All content script loaded');
 
@@ -19,18 +26,38 @@ const createMonitor =
   () => {
     logger.debug(`${config.name} monitoring started.`);
 
-    // Subscribe to filter changes
-    let cachedFilters = textFilterStorage.getSnapshot()?.filters ?? [];
+    // Subscribe to storage updates
+    const cachedValues = {
+      filters: [] as TextFilter[],
+      template: DEFAULT_SPEECH_TEMPLATE as string,
+    } as const;
+    // The `storageValueKey` must match both the name of the value property in storage and the key in `cachedValues`.
+    const storageSubscriptions = [
+      { storage: textFilterStorage, storageValueKey: 'filters', default: [] },
+      {
+        storage: speechTemplateStorage,
+        storageValueKey: 'template',
+        default: DEFAULT_SPEECH_TEMPLATE,
+      },
+    ] as const;
+    const storageUnsubscriptionFunctions: Array<() => void> = [];
 
-    const unsubscribeFilterUpdate = textFilterStorage.subscribe(() => {
-      const newFilters = textFilterStorage.getSnapshot()?.filters ?? [];
-      cachedFilters = newFilters;
-      logger.debug(`Text filters updated: ${newFilters.length} filters`);
-    });
+    for (const { storage, storageValueKey, default: defaultValue } of storageSubscriptions) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (cachedValues as any)[storageValueKey] = (storage.getSnapshot() as any)?.[storageValueKey] ?? defaultValue;
+
+      const unsubscribe = storage.subscribe(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (cachedValues as any)[storageValueKey] = (storage.getSnapshot() as any)?.[storageValueKey] ?? defaultValue;
+        logger.debug(`Storage updated (${storageValueKey}): ${cachedValues[storageValueKey]}`);
+      });
+      storageUnsubscriptionFunctions.push(unsubscribe);
+    }
 
     type MessageData = {
       fieldValues: Record<string, string>;
       filteredFieldValues: Record<string, string>;
+      serialized: string; // Used as a unique identifier for the message
       text: string;
     };
     const extractMessageData = (element: Element): MessageData | null => {
@@ -42,20 +69,27 @@ const createMonitor =
       const filteredFieldValues = { ...fieldValues };
 
       for (const [fieldName, fieldValue] of Object.entries(filteredFieldValues)) {
-        const fieldFilters = cachedFilters.filter(f => f.enabled && f.target === 'field' && f.fieldName === fieldName);
+        const fieldFilters = cachedValues.filters.filter(
+          f => f.enabled && f.target === 'field' && f.fieldName === fieldName,
+        );
         filteredFieldValues[fieldName] = applyTextFilters(fieldValue, fieldFilters, { fieldName, logger });
       }
 
-      let formattedText = formatText(config.textFormat, filteredFieldValues);
+      let formattedText = formatText(cachedValues.template, filteredFieldValues);
 
       // Apply output-level filters
-      const outputFilters = cachedFilters.filter(f => f.enabled && f.target === 'output');
+      const outputFilters = cachedValues.filters.filter(f => f.enabled && f.target === 'output');
       formattedText = applyTextFilters(formattedText, outputFilters, { logger });
 
       // Re-normalize whitespace. formattedText may contain extra spacing from:
       // - formatText: user-supplied format string with multiple spaces
       // - applyTextFilters: text replacements
-      return { fieldValues, filteredFieldValues, text: normalizeWhitespaces(formattedText) };
+      return {
+        fieldValues,
+        filteredFieldValues,
+        serialized: formatText(DEFAULT_SPEECH_TEMPLATE, filteredFieldValues),
+        text: normalizeWhitespaces(formattedText),
+      };
     };
 
     const messageQueue: string[] = [];
@@ -124,7 +158,7 @@ const createMonitor =
     let hasLoaded = false;
 
     // Twitch chat inserts nodes for the same message twice, so we need to ignore duplicates
-    let lastText = '';
+    let lastMessage = '';
 
     const loadDetectionSelector = config.loadDetectionSelector;
     const observer = new MutationObserver(mutations => {
@@ -162,8 +196,8 @@ const createMonitor =
                 }
 
                 // Duplicate message check for Twitch chat
-                if (message.text !== lastText) {
-                  lastText = message.text;
+                if (message.serialized !== lastMessage) {
+                  lastMessage = message.serialized;
                   queueMessage(message.text);
                 }
               }
@@ -180,7 +214,7 @@ const createMonitor =
     logger.debug('MutationObserver started', { containerNode });
 
     return () => {
-      unsubscribeFilterUpdate();
+      storageUnsubscriptionFunctions.forEach(unsubscribe => unsubscribe());
       observer.disconnect();
 
       clearMessageQueue();
