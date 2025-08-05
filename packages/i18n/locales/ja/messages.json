@@ -1,7 +1,7 @@
 {
   "extensionDescription": {
     "description": "Extension description",
-    "message": "YouTubeライブ配信のチャットを音声で読み上げる拡張機能です。"
+    "message": "YouTube/Twitchライブ配信のチャットを音声で読み上げる拡張機能です。"
   },
   "extensionName": {
     "description": "Extension name",
