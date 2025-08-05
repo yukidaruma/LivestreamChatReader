@@ -45,7 +45,12 @@ const manifest = {
   // },
   version: packageJson.version,
   description: '__MSG_extensionDescription__',
-  host_permissions: ['https://www.youtube.com/live_chat*', 'https://studio.youtube.com/live_chat*'],
+  host_permissions: [
+    'https://www.youtube.com/live_chat*',
+    'https://studio.youtube.com/live_chat*',
+    'https://www.twitch.tv/*',
+    'https://dashboard.twitch.tv/*',
+  ],
   permissions,
   options_page: 'options/index.html',
   background: {
@@ -63,7 +68,12 @@ const manifest = {
   },
   content_scripts: [
     {
-      matches: ['https://www.youtube.com/live_chat*', 'https://studio.youtube.com/live_chat*'],
+      matches: [
+        'https://www.youtube.com/live_chat*',
+        'https://studio.youtube.com/live_chat*',
+        'https://www.twitch.tv/*',
+        'https://dashboard.twitch.tv/*',
+      ],
       js: ['content/all.iife.js'],
       all_frames: true,
     },
@@ -71,7 +81,13 @@ const manifest = {
   web_accessible_resources: [
     {
       resources: ['*.js', '*.css', '*.svg', '*.png'],
-      matches: ['https://www.youtube.com/*', 'https://studio.youtube.com/*'], // The exact same pattern with `content_scripts` does not work
+      matches: [
+        // The exact same pattern with `content_scripts` does not work
+        'https://www.youtube.com/*',
+        'https://studio.youtube.com/*',
+        'https://www.twitch.tv/*',
+        'https://dashboard.twitch.tv/*',
+      ],
     },
   ],
   side_panel: sidePanel,

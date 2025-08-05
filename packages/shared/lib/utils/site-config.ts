@@ -1,17 +1,21 @@
 import type { FieldExtractor } from './text-to-speech.js';
 
 export type SiteConfig = {
+  id: string;
   name: string;
   urlPatterns: string[];
   containerSelector?: string;
+  loadDetectionSelector?: string;
   messageSelector: string;
   fields: FieldExtractor[];
   textFormat: string;
   pollingInterval?: number;
 };
+export type SiteId = (typeof siteConfigs)[number]['id'];
 
-export const siteConfigs: SiteConfig[] = [
+export const siteConfigs = [
   {
+    id: 'youtube',
     name: 'YouTube Live Chat',
     urlPatterns: ['https://www.youtube.com/live_chat', 'https://studio.youtube.com/live_chat'],
     containerSelector: '#items',
@@ -22,7 +26,20 @@ export const siteConfigs: SiteConfig[] = [
     ],
     textFormat: '%(name) %(body)',
   },
-];
+  {
+    id: 'twitch',
+    name: 'Twitch Chat',
+    urlPatterns: ['https://www.twitch.tv/', 'https://dashboard.twitch.tv/'],
+    containerSelector: '.chat-scrollable-area__message-container',
+    loadDetectionSelector: '[data-a-target="chat-welcome-message"]',
+    messageSelector: '.chat-line__message-container',
+    fields: [
+      { name: 'name', selector: '.chat-author__display-name' },
+      { name: 'body', selector: '[data-a-target="chat-line-message-body"]' },
+    ],
+    textFormat: '%(name) %(body)',
+  },
+] as const satisfies SiteConfig[];
 
 export const findSiteConfigByUrl = (url: string): SiteConfig | null => {
   // Use YouTube config for test screen

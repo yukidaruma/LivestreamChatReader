@@ -1,3 +1,4 @@
+import { waitForElementAppearance, waitForElementRemoval } from './dom-util';
 import {
   logger,
   formatText,
@@ -9,32 +10,23 @@ import {
 } from '@extension/shared/lib/utils';
 import { applyTextFilters } from '@extension/shared/lib/utils/text-filter';
 import { extensionEnabledStorage, textFilterStorage, ttsVoiceEngineStorage } from '@extension/storage';
-import type { SiteConfig } from '@extension/shared/lib/utils/site-config';
+import type { SiteConfig, SiteId } from '@extension/shared/lib/utils/site-config';
 
 logger.log('All content script loaded');
 
 const createMonitor =
-  (config: SiteConfig, { ignoreNames }: { ignoreNames?: string[] }) =>
+  (config: SiteConfig, containerNode: Element, { ignoreNames }: { ignoreNames?: string[] }) =>
   () => {
     logger.debug(`${config.name} monitoring started.`);
 
     // Subscribe to filter changes
     let cachedFilters = textFilterStorage.getSnapshot()?.filters ?? [];
 
-    const _unsubscribeFilterUpdate = textFilterStorage.subscribe(() => {
+    const unsubscribeFilterUpdate = textFilterStorage.subscribe(() => {
       const newFilters = textFilterStorage.getSnapshot()?.filters ?? [];
       cachedFilters = newFilters;
       logger.debug(`Text filters updated: ${newFilters.length} filters`);
     });
-
-    // Start observing updates
-    let containerNode: Element = document.body;
-    if (config.containerSelector) {
-      const foundContainer = document.querySelector(config.containerSelector);
-      if (foundContainer) {
-        containerNode = foundContainer;
-      }
-    }
 
     type MessageData = {
       fieldValues: Record<string, string>;
@@ -68,6 +60,11 @@ const createMonitor =
 
     const messageQueue: string[] = [];
     let isProcessing = false;
+    let cancelSpeech: (() => void) | null = null;
+
+    const clearMessageQueue = () => {
+      messageQueue.length = 0;
+    };
 
     const processQueue = async () => {
       if (isProcessing || messageQueue.length === 0) {
@@ -84,15 +81,18 @@ const createMonitor =
         logger.debug(`Start speech: "${message}"`);
 
         const { promise, cancel } = speakText(message, storedVoiceURI, { logger });
+        cancelSpeech = cancel;
+
         const unsubscribe = extensionEnabledStorage.subscribe(() => {
           const snapshot = extensionEnabledStorage.getSnapshot();
           if (snapshot && !snapshot.enabled) {
             logger.debug('Extension disabled, canceling current speech');
             isProcessing = false;
 
-            cancel();
+            clearMessageQueue();
 
-            messageQueue.length = 0; // Clear the queue
+            cancel();
+            cancelSpeech = null;
           }
         });
 
@@ -105,9 +105,10 @@ const createMonitor =
           if (error instanceof Error) {
             logger.error(`Error during speech: "${message}": ${error.message}`);
           }
+        } finally {
+          cancelSpeech = null;
+          unsubscribe();
         }
-
-        unsubscribe();
       }
 
       isProcessing = false;
@@ -120,6 +121,12 @@ const createMonitor =
     };
 
     // Set up MutationObserver to watch for new messages
+    let hasLoaded = false;
+
+    // Twitch chat inserts nodes for the same message twice, so we need to ignore duplicates
+    let lastText = '';
+
+    const loadDetectionSelector = config.loadDetectionSelector;
     const observer = new MutationObserver(mutations => {
       for (const mutation of mutations) {
         if (mutation.type !== 'childList') {
@@ -130,7 +137,18 @@ const createMonitor =
         for (let i = 0; i < mutation.addedNodes.length; i++) {
           const node = mutation.addedNodes.item(i)!;
           if (node.nodeType === Node.ELEMENT_NODE) {
-            const element = node as Element & { data?: { authorExternalChannelId?: string } };
+            const element = node as Element;
+
+            if (loadDetectionSelector && !hasLoaded) {
+              if (element.matches(loadDetectionSelector) || element.querySelector(loadDetectionSelector)) {
+                // Prevent messages prior to load being spoken
+                // 1-second delay to ensure previous messages are processed
+                setTimeout(() => (hasLoaded = true), 1000);
+                logger.debug(`[loadDetectionSelector] chat loaded, starting message detection in 1 second.`);
+                break;
+              }
+              continue;
+            }
 
             // Check if the element itself matches the message selector;
             // if not, check if it contains any matching elements
@@ -143,7 +161,11 @@ const createMonitor =
                   continue;
                 }
 
-                queueMessage(message.text);
+                // Duplicate message check for Twitch chat
+                if (message.text !== lastText) {
+                  lastText = message.text;
+                  queueMessage(message.text);
+                }
               }
             }
           }
@@ -156,6 +178,16 @@ const createMonitor =
       subtree: !config.containerSelector, // Only observe subtree if no specific container
     });
     logger.debug('MutationObserver started', { containerNode });
+
+    return () => {
+      unsubscribeFilterUpdate();
+      observer.disconnect();
+
+      clearMessageQueue();
+
+      cancelSpeech?.();
+      cancelSpeech = null;
+    };
   };
 
 const main = async () => {
@@ -176,24 +208,59 @@ const main = async () => {
 
   speechSynthesis.getVoices(); // Ensure voices are loaded on first speechSynthesis.speak call
 
-  let myName: string | null = null;
-  const ytInitialDataScript = Array.from(document.scripts).find(script =>
-    script.textContent?.startsWith('window["ytInitialData"]'),
-  )?.textContent;
-  const ytInitialDataMatch = ytInitialDataScript?.match(/window\["ytInitialData"\]\s*=\s*({.*?});/);
-  if (ytInitialDataMatch) {
-    try {
-      const ytInitialData = JSON.parse(ytInitialDataMatch[1]);
-      // You can also obtain channel id from following path:
-      // ytInitialData.continuationContents.liveChatContinuation.actionPanel.liveChatMessageInputRenderer.sendButton.buttonRenderer.serviceEndpoint.sendLiveChatMessageEndpoint.actions[0].addLiveChatTextMessageFromTemplateAction.template.liveChatTextMessageRenderer.authorExternalChannelId
-      myName = ytInitialData?.continuationContents?.liveChatContinuation?.viewerName || null;
-    } catch {
-      /* noop */
-    }
-  }
+  const myName = await getMyName(siteConfig.id as SiteId);
 
-  const monitor = createMonitor(siteConfig, { ignoreNames: myName ? [myName] : undefined });
-  monitor();
+  const monitorOptions = { ignoreNames: myName ? [myName] : undefined };
+  if (siteConfig.containerSelector) {
+    // Twitch destroys/recreates chat containers during navigation,
+    // so we need to monitor for the container's appearance/removal
+    while (true) {
+      const foundContainer = await waitForElementAppearance(siteConfig.containerSelector);
+
+      const monitor = createMonitor(siteConfig, foundContainer, monitorOptions);
+      const disposeMonitor = monitor();
+
+      try {
+        await waitForElementRemoval(foundContainer);
+      } finally {
+        disposeMonitor();
+      }
+    }
+  } else {
+    const monitor = createMonitor(siteConfig, document.body, monitorOptions);
+    monitor();
+  }
+};
+
+const getMyName = async (id: SiteId): Promise<string | null> => {
+  switch (id) {
+    case 'youtube': {
+      const ytInitialDataScript = Array.from(document.scripts).find(script =>
+        script.textContent?.startsWith('window["ytInitialData"]'),
+      )?.textContent;
+      const ytInitialDataMatch = ytInitialDataScript?.match(/window\["ytInitialData"\]\s*=\s*({.*?});/);
+      if (ytInitialDataMatch) {
+        try {
+          const ytInitialData = JSON.parse(ytInitialDataMatch[1]);
+          // You can also obtain channel id from following path:
+          // ytInitialData.continuationContents.liveChatContinuation.actionPanel.liveChatMessageInputRenderer.sendButton.buttonRenderer.serviceEndpoint.sendLiveChatMessageEndpoint.actions[0].addLiveChatTextMessageFromTemplateAction.template.liveChatTextMessageRenderer.authorExternalChannelId
+          return ytInitialData?.continuationContents?.liveChatContinuation?.viewerName || null;
+        } catch {
+          /* noop */
+        }
+      }
+
+      return null;
+    }
+
+    case 'twitch': {
+      // TODO: Currently, we haven't figured out how to get the current user name from Twitch.
+      return null;
+    }
+
+    default:
+      return null;
+  }
 };
 
 main();
