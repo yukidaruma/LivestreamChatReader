@@ -1,10 +1,15 @@
-import env, { IS_DEV, IS_PROD } from '@extension/env';
+import env, { IS_DEV, IS_E2E_TEST, IS_PROD } from '@extension/env';
 import { watchRebuildPlugin } from '@extension/hmr';
 import react from '@vitejs/plugin-react-swc';
 import deepmerge from 'deepmerge';
 import { defineConfig } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import type { UserConfig } from 'vite';
+
+const definedValues: Record<string, string> = {};
+if (!IS_E2E_TEST) {
+  definedValues['navigator.webdriver'] = 'false';
+}
 
 export const watchOption = IS_DEV
   ? {
@@ -20,7 +25,7 @@ export const withPageConfig = (config: UserConfig) =>
       {
         define: {
           'process.env': env,
-          'navigator.webdriver': IS_DEV ? undefined : 'false',
+          ...definedValues,
         },
         base: '',
         plugins: [react(), IS_DEV && watchRebuildPlugin({ refresh: true }), nodePolyfills()],

@@ -80,7 +80,7 @@ describe('Text-to-Speech Extension E2E', () => {
   });
 
   // This message should be changed
-  it('should process multiple messages sequentially and spy on speakText calls using CDP', async () => {
+  it('should process multiple messages sequentially', async () => {
     const speakTextCalls: Array<{ text: string; timestamp: number }> = [];
     const { Runtime, Page } = cdpClient;
 

@@ -3,6 +3,7 @@
 # Default values
 CLI_CEB_DEV=false
 CLI_CEB_FIREFOX=false
+CLI_CEB_E2E=false
 
 validate_is_boolean() {
   if [[ "$1" != "true" && "$1" != "false" ]]; then
@@ -40,6 +41,10 @@ parse_arguments() {
         CLI_CEB_DEV="$value"
         validate_is_boolean "$CLI_CEB_DEV" "CLI_CEB_DEV"
         ;;
+      CLI_CEB_E2E)
+        CLI_CEB_E2E="$value"
+        validate_is_boolean "$CLI_CEB_E2E" "CLI_CEB_E2E"
+        ;;
       CLI_CEB_FIREFOX)
         CLI_CEB_FIREFOX="$value"
         validate_is_boolean "$CLI_CEB_FIREFOX" "CLI_CEB_FIREFOX"
@@ -71,6 +76,7 @@ create_new_file() {
   {
     echo "# THOSE VALUES ARE EDITABLE ONLY VIA CLI"
     echo "CLI_CEB_DEV=$CLI_CEB_DEV"
+    echo "CLI_CEB_E2E=$CLI_CEB_E2E"
     echo "CLI_CEB_FIREFOX=$CLI_CEB_FIREFOX"
     for value in "${cli_values[@]}"; do
       echo "$value"

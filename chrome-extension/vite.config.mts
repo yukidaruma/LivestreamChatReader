@@ -4,17 +4,22 @@ import libAssetsPlugin from '@laynezh/vite-plugin-lib-assets';
 import makeManifestPlugin from './utils/plugins/make-manifest-plugin.js';
 import { watchPublicPlugin, watchRebuildPlugin } from '@extension/hmr';
 import { watchOption } from '@extension/vite-config';
-import env, { IS_DEV, IS_PROD } from '@extension/env';
+import env, { IS_DEV, IS_E2E_TEST, IS_PROD } from '@extension/env';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 const rootDir = resolve(import.meta.dirname);
 const srcDir = resolve(rootDir, 'src');
 
+const definedValues: Record<string, string> = {};
+if (!IS_E2E_TEST) {
+  definedValues['navigator.webdriver'] = 'false';
+}
+
 const outDir = resolve(rootDir, '..', 'dist');
 export default defineConfig({
   define: {
     'process.env': env,
-    'navigator.webdriver': IS_DEV ? undefined : 'false',
+    ...definedValues,
   },
   resolve: {
     alias: {

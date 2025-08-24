@@ -91,8 +91,12 @@ const setWebDriverShim = () => {
     // It is necessary to resolve the promise returned. The extension's
     // message queuing logic relies on the promise resolution.
     // This spy allows us to monitor the calls without breaking the sequence.
-    options?.onEvent?.({ type: 'end' } satisfies chrome.tts.TtsEvent);
-    return Promise.resolve();
+
+    // Simulate TTS completion after 100ms
+    setTimeout(() => {
+      options?.onEvent?.({ type: 'end' } satisfies chrome.tts.TtsEvent);
+      return Promise.resolve();
+    }, 100);
   } as typeof chrome.tts.speak;
 
   console.log('[SPEAKTEXT_MONITOR] chrome.tts.speak shim set up successfully');
