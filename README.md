@@ -1,7 +1,7 @@
 # Livestream Chat Reader
 
 [![Chrome Web Store - Version](https://img.shields.io/chrome-web-store/v/gpnckbhgpnjciklpoehkmligeaebigaa?style=flat-square&color=%234285f4&label=Version&logo=google-chrome)](https://chromewebstore.google.com/detail/gpnckbhgpnjciklpoehkmligeaebigaa)
-[![Chrome Web Store - Downloads](https://img.shields.io/chrome-web-store/users/gpnckbhgpnjciklpoehkmligeaebigaa?style=flat-square&color=%234285f4&label=Downloads&logo=googlechrome)](https://chromewebstore.google.com/detail/gpnckbhgpnjciklpoehkmligeaebigaa)
+[![Chrome Web Store - Users](https://img.shields.io/chrome-web-store/users/gpnckbhgpnjciklpoehkmligeaebigaa?style=flat-square&color=%234285f4&label=Users&logo=googlechrome)](https://chromewebstore.google.com/detail/gpnckbhgpnjciklpoehkmligeaebigaa)
 
 ## Development
 
@@ -12,10 +12,10 @@ For production builds, use `pnpm build` to build an optimized version or `pnpm z
 
 ### Note
 
-- There is a hidden debug interface that can be used for development, only enabled in the development build by config in `chrome-extension/manifest.ts`. Click "Open side panel" from the extension menu to access it.
+- There is a hidden debug interface that can be used for development, only enabled in the development build by config in `chrome-extension/manifest.ts`. Click "Open side panel" from the extension menu to access it.  
   <img src="docs/debug-side-panel.png" width="320" alt="Debug side panel">
   - It is included in the release version of this extension, but cannot normally be accessed through user interface. You can still open it directly via `chrome-extension://gpnckbhgpnjciklpoehkmligeaebigaa/side-panel/index.html`.
-- If you are looking for a framework to start developing Chrome extensions, you should definitely check out [WXT](https://github.com/wxt-dev/wxt) as well as [Chrome Extension Boilerplate](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite), which this project is built upon.
+- If you want to develop Chrome extensions on your own, you should check out [WXT](https://github.com/wxt-dev/wxt) in addition to [Chrome Extension Boilerplate](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite) (which this project uses).
 
 ## License
 
