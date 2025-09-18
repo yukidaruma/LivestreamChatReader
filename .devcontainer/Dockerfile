@@ -1,14 +1,13 @@
-FROM node:24.2.0
+# `ubuntu` is the default username for playwright container
+FROM mcr.microsoft.com/playwright:v1.55.0-noble
 
-ENV PNPM_HOME="/workspace/pnpm"
-ENV PLAYWRIGHT_BROWSERS_PATH="/workspace/playwright"
-ENV PATH="$PNPM_HOME:$PATH"
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  unzip \
+  vim \
+  git \
+  && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /workspace
-RUN chown -R node:node /workspace
+ENV PATH="/workspace/app/node_modules/.bin:$PATH"
 
-RUN corepack enable pnpm
-
-# Install Playwright dependencies and browsers
-RUN pnpm add -g playwright
-RUN playwright install chromium --with-deps
+USER ubuntu
+RUN curl -fsSL https://bun.sh/install | bash -s "bun-v1.2.22"
