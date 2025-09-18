@@ -4,6 +4,7 @@
     "dockerfile": "Dockerfile",
     "context": ".."
   },
+  "workspaceFolder": "/workspace/app",
   "mounts": [
     {
       "source": "${localWorkspaceFolder}",
@@ -20,8 +21,8 @@
     "ghcr.io/devcontainers/features/git:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
-  "postCreateCommand": "COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm install",
-  "remoteUser": "node",
+  "postCreateCommand": "bun install",
+  "remoteUser": "ubuntu",
   "forwardPorts": [3000, 5173],
   "portsAttributes": {
     "3000": {
