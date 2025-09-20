@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.0 (2025-09-21)
+### Added
+- "Speech Rate" setting
+- "Changelog" section to Settings page
+### Changed
+- Use [Bun](https://bun.com) and [WXT](https://wxt.dev) for development  
+  This change reduced extension size by 80% (688 kB => 137 kB), with the added features included.
+### Fixed
+- Background color not being applied when scrolling Settings page
+
 ## 1.0.1 (2025-08-05)
 ### Added
 - Twitch support
