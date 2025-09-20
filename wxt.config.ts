@@ -2,18 +2,6 @@ import packageJson from './package.json';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'wxt';
 
-let sidePanel: Browser.runtime.ManifestV3['side_panel'] | undefined;
-const permissions: Browser.runtime.ManifestV3['permissions'] = [
-  'storage',
-  'tts', // This permission is required for using TTS without user interaction
-];
-if (import.meta.env.DEV) {
-  permissions.push('sidePanel');
-  sidePanel = {
-    default_path: 'sidepanel/index.html',
-  };
-}
-
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
@@ -31,7 +19,10 @@ export default defineConfig({
       'https://www.twitch.tv/*',
       'https://dashboard.twitch.tv/*',
     ],
-    permissions,
+    permissions: [
+      'storage',
+      'tts', // This permission is required for using TTS without user interaction
+    ],
     background: {
       service_worker: 'background.js',
       type: 'module',
@@ -53,7 +44,6 @@ export default defineConfig({
         ],
       },
     ],
-    side_panel: sidePanel,
   },
   webExt: {
     disabled: true,
