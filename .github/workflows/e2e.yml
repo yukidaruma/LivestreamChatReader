@@ -16,10 +16,9 @@ jobs:
       WXT_CI: true
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: '.nvmrc'
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile --prefer-offline
-      - run: pnpm ${{ matrix.browser == 'chrome' && 'e2e' || 'e2e:firefox' }}
+          bun-version-file: '.bun-version'
+      - uses: actions/setup-node@v4
+      - run: bun install --frozen-lockfile --prefer-offline
+      - run: bun ${{ matrix.browser == 'chrome' && 'e2e' || 'e2e:firefox' }}

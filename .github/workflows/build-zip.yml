@@ -1,19 +1,17 @@
 name: Build And Upload Extension Zip Via Artifact
 
-on: [ pull_request_target ]
+on: [pull_request_target]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: '.nvmrc'
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile --prefer-offline
-      - run: pnpm build
+          bun-version-file: '.bun-version'
+      - run: bun install --frozen-lockfile --prefer-offline
+      - run: bun build
       - uses: actions/upload-artifact@v4
         with:
-          path: dist/*
+          path: .output/*
