@@ -25,7 +25,7 @@ export const ToggleButton = ({ checked, onChange, label, srOnlyLabel, className 
           )}
         />
       </div>
-      {label && <span className="select-none text-sm">{label}</span>}
+      {label && <span className="text-sm select-none">{label}</span>}
     </label>
   </div>
 );

@@ -1,19 +1,13 @@
 {
   "name": "@extension/e2e",
-  "version": "1.0.1",
   "description": "E2e tests configuration",
   "private": true,
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "e2e": "wdio run config/wdio.browser.conf.ts",
-    "clean:node_modules": "pnpx rimraf node_modules",
-    "clean:turbo": "pnpx rimraf .turbo",
-    "clean": "pnpm clean:turbo && pnpm clean:node_modules"
+    "e2e": "bunx @wdio/cli run config/wdio.browser.conf.ts"
   },
   "devDependencies": {
-    "@extension/env": "workspace:*",
-    "@extension/tsconfig": "workspace:*",
     "@types/chrome-remote-interface": "^0.31.13",
     "@wdio/cli": "^9.14.0",
     "@wdio/globals": "^9.14.0",
