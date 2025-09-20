@@ -17,6 +17,12 @@
   "toggleExtension": {
     "message": "拡張機能のオン・オフ"
   },
+  "changelog": {
+    "message": "更新履歴"
+  },
+  "viewOnGitHub": {
+    "message": "GitHubで表示する"
+  },
   "contacts": {
     "message": "連絡先"
   },

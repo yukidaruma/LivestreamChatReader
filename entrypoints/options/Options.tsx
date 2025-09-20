@@ -1,3 +1,4 @@
+import rawChangelog from '../../CHANGELOG.md?raw';
 import {
   PROJECT_URL_OBJECT,
   supportedLanguages,
@@ -53,6 +54,8 @@ const Options = () => {
   const [isTestingVoice, setIsTestingVoice] = useState(false);
   const currentVolumeRef = useRef(storedVolume);
   const cancelTestSpeechRef = useRef<(() => void) | null>(null);
+
+  const changelog = rawChangelog.replace(/^# Changelog/, '').trim();
 
   const invalidFieldNames = useMemo(() => validateSpeechTemplate(localSpeechTemplate), [localSpeechTemplate]);
 
@@ -249,9 +252,24 @@ const Options = () => {
           </div>
         </div>
 
+        <div>
+          <h2>{t('testPage')}</h2>
+          <a href="chat-test.html">{t('openPage', t('testPage'))}</a>
+        </div>
+
         {!isInline && (
-          <>
-            <hr />
+          <div className="divide-y divide-gray-600 border-t border-gray-600 [&>*]:py-2">
+            <div>
+              <h1>{t('changelog')}</h1>
+              <p className="mb-2">
+                <a href={`${PROJECT_URL_OBJECT.url}/blob/main/CHANGELOG.md`} target="_blank" rel="noopener noreferrer">
+                  {t('viewOnGitHub')}
+                </a>
+              </p>
+              <div className="form-control max-h-60 max-w-240! overflow-y-scroll font-mono text-sm whitespace-pre-wrap">
+                {changelog}
+              </div>
+            </div>
 
             <div>
               <h1>{t('contacts')}</h1>
@@ -272,13 +290,7 @@ const Options = () => {
                 </a>
               </div>
             </div>
-
-            <hr />
-
-            <div>
-              <a href="chat-test.html">{t('openPage', t('testPage'))}</a>
-            </div>
-          </>
+          </div>
         )}
       </div>
     </div>

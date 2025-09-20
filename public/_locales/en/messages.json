@@ -17,6 +17,12 @@
   "toggleExtension": {
     "message": "Toggle extension"
   },
+  "changelog": {
+    "message": "Update History"
+  },
+  "viewOnGitHub": {
+    "message": "View on GitHub"
+  },
   "contacts": {
     "message": "Contacts"
   },
