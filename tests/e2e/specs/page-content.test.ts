@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, test } from './fixtures';
-import { sleep } from '@/packages/shared/index.mjs';
+import { sleep } from '@/packages/shared';
 
 declare global {
   interface Window {

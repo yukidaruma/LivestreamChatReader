@@ -1,5 +1,4 @@
-import { findSiteConfigByUrl } from '../../packages/shared/lib/utils/site-config.ts';
-import { describe, it } from 'mocha';
+import { findSiteConfigByUrl } from '../../packages/shared/lib/utils/site-config';
 import { strict as assert } from 'assert';
 
 describe('Site Configuration', () => {

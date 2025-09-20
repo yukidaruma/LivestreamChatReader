@@ -19,6 +19,7 @@
     "lint:fix": "eslint --fix",
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
+    "test:unit": "bun test tests/unit",
     "e2e": "bun run build && bun run e2e-run",
     "e2e:firefox": "bun run build:firefox && bun run e2e-run",
     "e2e-run": "playwright test tests/e2e",

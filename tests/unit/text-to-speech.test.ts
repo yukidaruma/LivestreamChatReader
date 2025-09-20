@@ -1,5 +1,4 @@
 import { extractFieldValues, formatText, normalizeWhitespaces } from '../../packages/shared/lib/utils/text-to-speech';
-import { describe, it } from 'mocha';
 import { strict as assert } from 'assert';
 import type { FieldExtractor } from '../../packages/shared/lib/utils/text-to-speech';
 
