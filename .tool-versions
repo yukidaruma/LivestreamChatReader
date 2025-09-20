@@ -1,0 +1,2 @@
+# Also specify Bun version in .devcontainer/Dockerfile
+bun 1.2.21 
