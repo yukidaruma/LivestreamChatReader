@@ -1,5 +1,5 @@
-import { createStorage, StorageEnum } from '../base/index.js';
-import type { TextFilterStateType, TextFilterStorageType, TextFilter } from '../base/index.js';
+import { createStorage, StorageEnum } from '../base/index';
+import type { TextFilterStateType, TextFilterStorageType, TextFilter } from '../base/index';
 
 const storage = createStorage<TextFilterStateType>(
   'text-filter-key',

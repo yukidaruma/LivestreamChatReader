@@ -1,5 +1,5 @@
 import { logConsoleStorage, logStorage } from '@extension/storage';
-import type { LogEntry } from '@extension/storage/lib/base/types.js';
+import type { LogEntry } from '@extension/storage/lib/base/types';
 
 type LogTask = {
   prefix: string;
@@ -63,11 +63,11 @@ const processLogTask = async ({ prefix, level, args, timestamp }: LogTask) => {
 
 const getExecutionContext = (): string => {
   if (typeof window === 'undefined') {
-    if (typeof chrome !== 'undefined' && chrome.runtime) {
+    if (typeof browser !== 'undefined' && browser.runtime) {
       return 'BG';
     }
   } else {
-    if (typeof chrome !== 'undefined' && window.location?.protocol === 'chrome-extension:') {
+    if (typeof browser !== 'undefined' && window.location?.protocol === 'chrome-extension:') {
       return 'EXT';
     }
     if (window.location) {

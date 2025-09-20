@@ -1,5 +1,5 @@
-import { createStorage, StorageEnum } from '../base/index.js';
-import type { LogEntry, LogStateType, LogStorageType } from '../base/index.js';
+import { createStorage, StorageEnum } from '../base/index';
+import type { LogEntry, LogStateType, LogStorageType } from '../base/index';
 
 const storage = createStorage<LogStateType>(
   'log-storage-key',

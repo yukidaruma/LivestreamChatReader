@@ -11,7 +11,7 @@ export const useSubscribeIcon = () => {
       const { enabled } = await extensionEnabledStorage.get();
       const icon = enabled ? 'speaker-icon-128.png' : 'mute-icon-128.png';
 
-      chrome.action.setIcon({
+      browser.action.setIcon({
         path: `/${icon}`,
       });
     };

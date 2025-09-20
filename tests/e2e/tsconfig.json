@@ -1,7 +1,7 @@
 {
-  "extends": "@extension/tsconfig/module",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "lib": ["dom"],
+    "lib": ["dom", "ESNext"],
     "types": ["node", "@wdio/globals/types", "@wdio/mocha-framework"],
     "resolveJsonModule": true,
     "noUnusedLocals": true,

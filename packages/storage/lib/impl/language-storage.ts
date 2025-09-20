@@ -1,5 +1,5 @@
-import { createStorage, StorageEnum } from '../base/index.js';
-import type { LanguageStateType, LanguageStorageType } from '../base/index.js';
+import { createStorage, StorageEnum } from '../base/index';
+import type { LanguageStateType, LanguageStorageType } from '../base/index';
 
 const storage = createStorage<LanguageStateType>(
   'language-storage-key',

@@ -1,5 +1,5 @@
-import { createStorage, StorageEnum } from '../base/index.js';
-import type { TtsVolumeStateType, TtsVolumeStorageType } from '../base/index.js';
+import { createStorage, StorageEnum } from '../base/index';
+import type { TtsVolumeStateType, TtsVolumeStorageType } from '../base/index';
 
 const storage = createStorage<TtsVolumeStateType>(
   'tts-volume-key',

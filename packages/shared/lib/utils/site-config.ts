@@ -1,4 +1,4 @@
-import type { FieldExtractor } from './text-to-speech.js';
+import type { FieldExtractor } from './text-to-speech';
 
 export type SiteConfig = {
   id: string;

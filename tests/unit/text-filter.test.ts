@@ -1,7 +1,7 @@
-import { applyTextFilters } from '../../packages/shared/lib/utils/text-filter.ts';
+import { applyTextFilters } from '../../packages/shared/lib/utils/text-filter';
 import { describe, it } from 'mocha';
 import { strict as assert } from 'assert';
-import type { TextFilter } from '../../packages/storage/lib/base/types.js';
+import type { TextFilter } from '../../packages/storage/lib/base/types';
 
 describe('Text Filter Functions', () => {
   describe('applyTextFilters', () => {

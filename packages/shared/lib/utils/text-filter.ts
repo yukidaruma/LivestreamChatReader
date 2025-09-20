@@ -1,5 +1,5 @@
-import type { logger as loggerType } from './logger.js';
-import type { TextFilter } from '@extension/storage/lib/base/types.js';
+import type { logger as loggerType } from './logger';
+import type { TextFilter } from '@extension/storage/lib/base/types';
 
 const parseCommand = (command: string): { name: string; args: string[] } | null => {
   const match = command.trim().match(/^(\w+)\(([^)]*)\)$/);

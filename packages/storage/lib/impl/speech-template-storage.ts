@@ -1,5 +1,5 @@
-import { createStorage, StorageEnum } from '../base/index.js';
-import type { SpeechTemplateStateType, SpeechTemplateStorageType } from '../base/index.js';
+import { createStorage, StorageEnum } from '../base/index';
+import type { SpeechTemplateStateType, SpeechTemplateStorageType } from '../base/index';
 
 const storage = createStorage<SpeechTemplateStateType>(
   'speech-template-key',

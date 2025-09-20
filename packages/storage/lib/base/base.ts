@@ -1,5 +1,5 @@
-import { SessionAccessLevelEnum, StorageEnum } from './enums.js';
-import type { BaseStorageType, StorageConfigType, ValueOrUpdateType } from './types.js';
+import { SessionAccessLevelEnum, StorageEnum } from './enums';
+import type { BaseStorageType, StorageConfigType, ValueOrUpdateType } from './types';
 
 /**
  * Chrome reference error while running `processTailwindFeatures` in tailwindcss.
@@ -41,11 +41,11 @@ let globalSessionAccessLevelFlag: StorageConfigType['sessionAccessForContentScri
  * Checks if the storage permission is granted in the manifest.json.
  */
 const checkStoragePermission = (storageEnum: StorageEnum): void => {
-  if (!chrome) {
+  if (!browser) {
     return;
   }
 
-  if (!chrome.storage[storageEnum]) {
+  if (!browser.storage[storageEnum]) {
     throw new Error(`"storage" permission in manifest.ts: "storage ${storageEnum}" isn't defined`);
   }
 };
@@ -124,7 +124,7 @@ export const createStorage = <D = string>(
   };
 
   // Listener for live updates from the browser
-  const _updateFromStorageOnChanged = async (changes: { [key: string]: chrome.storage.StorageChange }) => {
+  const _updateFromStorageOnChanged = async (changes: { [key: string]: Browser.storage.StorageChange }) => {
     // Check if the key we are listening for is in the changes object
     if (changes[key] === undefined) return;
 

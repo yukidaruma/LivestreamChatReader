@@ -1,5 +1,5 @@
-import { createStorage, StorageEnum } from '../base/index.js';
-import type { TtsVoiceEngineStateType, TtsVoiceEngineStorageType } from '../base/index.js';
+import { createStorage, StorageEnum } from '../base/index';
+import type { TtsVoiceEngineStateType, TtsVoiceEngineStorageType } from '../base/index';
 
 const storage = createStorage<TtsVoiceEngineStateType>(
   'tts-voice-engine-key',

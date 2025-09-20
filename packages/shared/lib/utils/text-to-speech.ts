@@ -1,8 +1,8 @@
 /* eslint-disable import-x/exports-last */
 
 import { ttsVolumeStorage } from '@extension/storage';
-import type { logger as loggerType } from './logger.js';
-import type { BackgroundRequest, TTSSpeakRequest, InferBackgroundResponse } from './message-types.js';
+import type { logger as loggerType } from './logger';
+import type { BackgroundRequest, TTSSpeakRequest, InferBackgroundResponse } from './message-types';
 
 export const DEFAULT_SPEECH_TEMPLATE = '%(name) %(body)';
 
@@ -44,9 +44,9 @@ export const normalizeWhitespaces = (text: string): string => text.replace(/\s+/
 // Helper function to generate unique request ID (non-cryptographically secure)
 const generateRequestId = (): string => `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
 
-// Helper function to send TTS messages to background script via chrome.runtime.sendMessage
+// Helper function to send TTS messages to background script via `browser.runtime.sendMessage`
 export const sendTTSMessage = <T extends BackgroundRequest>(message: T): Promise<InferBackgroundResponse<T>> =>
-  chrome.runtime.sendMessage<T, InferBackgroundResponse<T>>(message);
+  browser.runtime.sendMessage<T, InferBackgroundResponse<T>>(message);
 
 export type CancellableSpeech = {
   promise: Promise<boolean>; // Resolves to true if speech completed successfully, false if cancelled

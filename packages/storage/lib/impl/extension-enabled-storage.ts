@@ -1,5 +1,5 @@
-import { createStorage, StorageEnum } from '../base/index.js';
-import type { ExtensionEnabledStateType, ExtensionEnabledStorageType } from '../base/index.js';
+import { createStorage, StorageEnum } from '../base/index';
+import type { ExtensionEnabledStateType, ExtensionEnabledStorageType } from '../base/index';
 
 const storage = createStorage<ExtensionEnabledStateType>(
   'extension-enabled-key',

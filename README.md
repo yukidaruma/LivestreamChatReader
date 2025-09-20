@@ -5,8 +5,10 @@
 
 ## Development
 
-I recommend using VS Code Dev Containers for development of this extension. Start the dev container, then run `bun dev` to launch the development server and build the extension. Once the extension is built, install the extension to your browser by loading the unpacked extension built to the `dist` directory.  
+I recommend using VS Code Dev Containers for development of this extension. Start the dev container, then run `bun dev` to launch the development server and build the extension. Once the extension is built, install the extension to your browser by loading the unpacked extension built to the `.output/chrome-mv3` directory.  
 *For detailed installation steps, you can also refer to the [Chrome extension installation guide](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite#for-chrome-).*
+
+Alternatively, you can launch Chrome with the extension installed by removing the `webExt.disabled: true` property in [`wxt.config.ts`](wxt.config.ts).
 
 For production builds, use `bun run build` to build an optimized version or `bun zip` to build and create a zip file for distribution.
 

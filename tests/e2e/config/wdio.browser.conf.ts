@@ -1,13 +1,14 @@
-import { config as baseConfig } from './wdio.conf.js';
-import { getChromeExtensionPath, getFirefoxExtensionPath } from '../utils/extension-path.js';
-import { IS_CI, IS_FIREFOX } from '@extension/env';
+import { config as baseConfig } from './wdio.conf';
+import { getChromeExtensionPath, getFirefoxExtensionPath } from '../utils/extension-path';
 import { readdir, readFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 
+const { IS_CI, IS_FIREFOX } = process.env;
+
 const extName = IS_FIREFOX ? '.xpi' : '.zip';
-const extensions = await readdir(join(import.meta.dirname, '../../../dist-zip'));
+const extensions = await readdir(join(import.meta.dirname, '../../../.output'));
 const latestExtension = extensions.filter(file => extname(file) === extName).at(-1);
-const extPath = join(import.meta.dirname, `../../../dist-zip/${latestExtension}`);
+const extPath = join(import.meta.dirname, `../../../.output/${latestExtension}`);
 const bundledExtension = (await readFile(extPath)).toString('base64');
 
 const chromeCapabilities = {

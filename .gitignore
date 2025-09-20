@@ -1,25 +1,21 @@
-# dependencies
-**/node_modules
+# Logs
+logs
+*.log
 
-# testing
-**/coverage
+node_modules
+.output
+stats.html
+stats-*.json
+.wxt
+web-ext.config.ts
 
-# build
-**/dist
-**/build
-**/dist-zip
-chrome-extension/manifest.js
-chrome-extension/pre-build.tsconfig.tsbuildinfo
-tsconfig.tsbuildinfo
-
-# env
-**/.env.*
-**/.env
-
-# etc
-.DS_Store
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
 .idea
-**/.turbo
-
-# compiled
-**/tailwind-output.css
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
