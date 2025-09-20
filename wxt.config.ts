@@ -4,10 +4,14 @@ import { defineConfig } from 'wxt';
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
-  modules: ['@wxt-dev/module-react'],
+  modules: ['@wxt-dev/auto-icons', '@wxt-dev/module-react'],
   vite: () => ({
     plugins: [tailwindcss()],
   }),
+  autoIcons: {
+    baseIconPath: 'public/speaker-icon.svg',
+    developmentIndicator: 'overlay',
+  },
   manifest: {
     default_locale: 'en',
     version: packageJson.version,
@@ -26,11 +30,6 @@ export default defineConfig({
     background: {
       service_worker: 'background.js',
       type: 'module',
-    },
-    icons: {
-      '32': 'icons/speaker-icon-32.png',
-      '128': 'icons/speaker-icon-128.png',
-      '512': 'icons/speaker-icon-512.png',
     },
     web_accessible_resources: [
       {

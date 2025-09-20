@@ -9,10 +9,10 @@ export const useSubscribeIcon = () => {
   useEffect(() => {
     const updateIcon = async () => {
       const { enabled } = await extensionEnabledStorage.get();
-      const icon = enabled ? 'speaker-icon-128.png' : 'mute-icon-128.png';
+      const icon = enabled ? '128.png' : 'mute-128.png';
 
       browser.action.setIcon({
-        path: `/${icon}`,
+        path: `/icons/${icon}`,
       });
     };
 
