@@ -11,6 +11,6 @@
   },
   "devDependencies": {
     "@extension/storage": "workspace:*",
-    "type-fest": "^4.41.0"
+    "type-fest": "^5.0.1"
   }
 }

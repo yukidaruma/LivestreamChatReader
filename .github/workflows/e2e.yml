@@ -13,7 +13,7 @@ jobs:
       matrix:
         browser: [chrome, firefox]
     env:
-      WXT_CI: true
+      IS_CI: true
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2

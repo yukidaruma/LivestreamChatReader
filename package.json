@@ -19,9 +19,9 @@
     "lint:fix": "eslint --fix",
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
-    "e2e": "bun run zip && bun run e2e-run",
-    "e2e:firefox": "bun run zip:firefox && bun run e2e-run",
-    "e2e-run": "bun run --filter @extension/e2e e2e",
+    "e2e": "bun run build && bun run e2e-run",
+    "e2e:firefox": "bun run build:firefox && bun run e2e-run",
+    "e2e-run": "playwright test tests/e2e",
     "postinstall": "husky"
   },
   "dependencies": {
@@ -37,9 +37,9 @@
     "@eslint/compat": "^1.3.2",
     "@extension/e2e": "workspace:*",
     "@tailwindcss/vite": "^4.1.13",
-    "@types/react": "^19.1.12",
+    "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
-    "@wxt-dev/module-react": "^1.1.3",
+    "@wxt-dev/module-react": "^1.1.5",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
@@ -57,7 +57,7 @@
     "tailwindcss": "^4.1.13",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.0",
-    "wxt": "^0.20.6"
+    "wxt": "^0.20.11"
   },
   "workspaces": [
     "packages/*",

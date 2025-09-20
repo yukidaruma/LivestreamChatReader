@@ -22,8 +22,6 @@ import {
 import type { SiteConfig, SiteId } from '@extension/shared/lib/utils/site-config';
 import type { TextFilter } from '@extension/storage/lib/base';
 
-logger.log('All content script loaded');
-
 const createMonitor =
   (config: SiteConfig, containerNode: Element, { ignoreNames }: { ignoreNames?: string[] }) =>
   () => {
@@ -229,10 +227,14 @@ const createMonitor =
 
 // Exporting for chat-test.js
 export const main = async () => {
+  logger.log('All content script loaded');
+
   const url = location.href;
   const siteConfig = findSiteConfigByUrl(url);
 
   // Initialize shim for E2E testing
+  // Since `navigator.webdriver` is undefined on service worker,
+  // we need to check it in content script.
   if (navigator.webdriver) {
     await initWebDriverShim();
   }
