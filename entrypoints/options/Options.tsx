@@ -105,7 +105,7 @@ const Options = () => {
     ttsVoiceEngineStorage.setUri(value === '' ? null : value);
   };
 
-  const testVoice = () => {
+  const startVoiceTest = () => {
     setIsTestingVoice(true);
     const speech = speakText(t('voiceTestMessage'));
     cancelTestSpeechRef.current = speech.cancel;
@@ -114,6 +114,10 @@ const Options = () => {
       setIsTestingVoice(false);
       cancelTestSpeechRef.current = null;
     });
+  };
+
+  const cancelVoiceTest = () => {
+    cancelTestSpeechRef.current?.();
   };
 
   useEffect(() => {
@@ -221,8 +225,8 @@ const Options = () => {
                 </option>
               )}
             </select>
-            <button onClick={testVoice} disabled={!enabled || isTestingVoice}>
-              {t('testVoice')}
+            <button onClick={isTestingVoice ? cancelVoiceTest : startVoiceTest} disabled={!enabled}>
+              {isTestingVoice ? t('cancel') : t('testVoice')}
             </button>
           </div>
         </div>

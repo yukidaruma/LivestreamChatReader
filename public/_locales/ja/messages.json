@@ -65,6 +65,9 @@
   "testVoice": {
     "message": "音声テスト"
   },
+  "cancel": {
+    "message": "キャンセル"
+  },
   "voiceTestMessage": {
     "message": "こんにちは、これはテストメッセージです"
   },

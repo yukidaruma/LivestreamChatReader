@@ -65,6 +65,9 @@
   "testVoice": {
     "message": "Test Voice"
   },
+  "cancel": {
+    "message": "Cancel"
+  },
   "voiceTestMessage": {
     "message": "Hello, this is a test message"
   },
