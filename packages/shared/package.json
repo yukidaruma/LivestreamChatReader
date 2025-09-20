@@ -10,7 +10,6 @@
     "react-error-boundary": "^6.0.0"
   },
   "devDependencies": {
-    "@extension/storage": "workspace:*",
-    "type-fest": "^5.0.1"
+    "@extension/storage": "workspace:*"
   }
 }

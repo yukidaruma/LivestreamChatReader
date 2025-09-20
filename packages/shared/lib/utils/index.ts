@@ -1,11 +1,8 @@
-export * from './helpers';
-export * from './colorful-logger';
 export * from './dom';
+export * from './helpers';
 export * from './i18n';
-export * from './init-app-with-shadow';
 export * from './logger';
 export type * from './message-types';
 export * from './site-config';
 export * from './text-filter';
 export * from './text-to-speech';
-export type * from './types';

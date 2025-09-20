@@ -2,12 +2,6 @@ import { SessionAccessLevelEnum, StorageEnum } from './enums';
 import type { BaseStorageType, StorageConfigType, ValueOrUpdateType } from './types';
 
 /**
- * Chrome reference error while running `processTailwindFeatures` in tailwindcss.
- *  To avoid this, we need to check if globalThis.chrome is available and add fallback logic.
- */
-const chrome = globalThis.chrome;
-
-/**
  * Sets or updates an arbitrary cache with a new value or the result of an update function.
  */
 const updateCache = async <D>(valueOrUpdate: ValueOrUpdateType<D>, cache: D | null): Promise<D> => {
@@ -76,7 +70,7 @@ export const createStorage = <D = string>(
   ) {
     checkStoragePermission(storageEnum);
 
-    chrome?.storage[storageEnum]
+    browser?.storage[storageEnum]
       .setAccessLevel({
         accessLevel: SessionAccessLevelEnum.ExtensionPagesAndContentScripts,
       })
@@ -90,7 +84,7 @@ export const createStorage = <D = string>(
   // Register life cycle methods
   const get = async (): Promise<D> => {
     checkStoragePermission(storageEnum);
-    const value = await chrome?.storage[storageEnum].get([key]);
+    const value = await browser?.storage[storageEnum].get([key]);
 
     if (!value) {
       return fallback;
@@ -105,7 +99,7 @@ export const createStorage = <D = string>(
     }
     cache = await updateCache(valueOrUpdate, cache);
 
-    await chrome?.storage[storageEnum].set({ [key]: serialize(cache) });
+    await browser?.storage[storageEnum].set({ [key]: serialize(cache) });
     _emitChange();
   };
 
@@ -145,7 +139,7 @@ export const createStorage = <D = string>(
 
   // Register listener for live updates for our storage area
   if (liveUpdate) {
-    chrome?.storage[storageEnum].onChanged.addListener(_updateFromStorageOnChanged);
+    browser?.storage[storageEnum].onChanged.addListener(_updateFromStorageOnChanged);
   }
 
   return {
