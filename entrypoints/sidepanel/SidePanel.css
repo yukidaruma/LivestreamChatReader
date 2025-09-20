@@ -1,7 +1,7 @@
 @import '@extension/ui/global.css';
 
 .App {
-  height: 100dvh;
+  min-height: 100dvh;
   background-color: var(--bg-primary);
   color: var(--text-primary);
 }
