@@ -20,16 +20,13 @@ const Popup = () => {
         </a>
       </header>
 
-      <div className="mt-4">
-        <div className="mb-4">
-          <ToggleButton
-            checked={enabled}
-            onChange={extensionEnabledStorage.toggle}
-            label={enabled ? t('enabled') : t('disabled')}
-            srOnlyLabel={t('toggleExtension')}
-          />
-        </div>
-      </div>
+      <ToggleButton
+        className="my-2 py-2"
+        checked={enabled}
+        onChange={extensionEnabledStorage.toggle}
+        label={enabled ? t('enabled') : t('disabled')}
+        srOnlyLabel={t('toggleExtension')}
+      />
     </div>
   );
 };
