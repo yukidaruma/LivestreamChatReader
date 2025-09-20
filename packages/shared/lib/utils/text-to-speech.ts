@@ -1,54 +1,15 @@
-/* eslint-disable import-x/exports-last */
-
 import { ttsVolumeStorage } from '@extension/storage';
 import type { logger as loggerType } from './logger';
-import type { BackgroundRequest, TTSSpeakRequest, InferBackgroundResponse } from './message-types';
-
-export const DEFAULT_SPEECH_TEMPLATE = '%(name) %(body)';
-
-export type FieldExtractor = {
-  name: string;
-  selector: string;
-  attribute?: string;
-  defaultValue?: string;
-};
-export const extractFieldValues = (element: Element, fields: FieldExtractor[]): Record<string, string> => {
-  const result: Record<string, string> = {};
-
-  for (const field of fields) {
-    let value: string | null = null;
-
-    if (field.selector) {
-      const targetElement = element.querySelector(field.selector);
-      if (targetElement) {
-        if (field.attribute) {
-          value = targetElement.getAttribute(field.attribute);
-        } else if (targetElement.textContent) {
-          value = targetElement.textContent.trim();
-        }
-      }
-    }
-
-    const resolvedValue = value ?? field.defaultValue;
-    result[field.name] = normalizeWhitespaces(resolvedValue ?? '');
-  }
-
-  return result;
-};
-
-export const formatText = (format: string, fields: Record<string, string>): string =>
-  format.replace(/%\((\w+)\)/g, (_match, fieldName) => fields[fieldName] ?? '');
-
-export const normalizeWhitespaces = (text: string): string => text.replace(/\s+/g, ' ').trim();
+import type { BackgroundRequest, InferBackgroundResponse, TTSSpeakRequest } from './message-types';
 
 // Helper function to generate unique request ID (non-cryptographically secure)
 const generateRequestId = (): string => `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
 
 // Helper function to send TTS messages to background script via `browser.runtime.sendMessage`
-export const sendTTSMessage = <T extends BackgroundRequest>(message: T): Promise<InferBackgroundResponse<T>> =>
+const sendTTSMessage = <T extends BackgroundRequest>(message: T): Promise<InferBackgroundResponse<T>> =>
   browser.runtime.sendMessage<T, InferBackgroundResponse<T>>(message);
 
-export type CancellableSpeech = {
+type CancellableSpeech = {
   promise: Promise<boolean>; // Resolves to true if speech completed successfully, false if cancelled
   cancel: () => Promise<void>;
 };

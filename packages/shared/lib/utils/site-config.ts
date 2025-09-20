@@ -1,4 +1,4 @@
-import type { FieldExtractor } from './text-to-speech';
+import type { FieldExtractor } from './chat-parser';
 
 export type SiteConfig = {
   id: string;

@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, test } from './fixtures';
-import { sleep } from '@/packages/shared';
+import { sleep } from '@/packages/shared/lib/utils/helpers'; // Only import `sleep` to avoid "browser is not defined" error
 
 declare global {
   interface Window {

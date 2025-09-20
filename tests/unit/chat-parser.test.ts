@@ -1,6 +1,6 @@
-import { extractFieldValues, formatText, normalizeWhitespaces } from '../../packages/shared/lib/utils/text-to-speech';
+import { extractFieldValues, formatText, normalizeWhitespaces } from '@extension/shared/lib/utils/chat-parser';
 import { strict as assert } from 'assert';
-import type { FieldExtractor } from '../../packages/shared/lib/utils/text-to-speech';
+import type { FieldExtractor } from '@extension/shared/lib/utils/chat-parser';
 
 describe('Text-to-Speech Utility Functions', () => {
   describe('extractFieldValues', () => {
