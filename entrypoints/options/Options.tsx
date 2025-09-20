@@ -15,6 +15,7 @@ import {
   extensionEnabledStorage,
   languageStorage,
   speechTemplateStorage,
+  ttsRateStorage,
   ttsVoiceEngineStorage,
   ttsVolumeStorage,
 } from '@extension/storage';
@@ -45,13 +46,17 @@ const Options = () => {
   const { isLight } = useStorage(exampleThemeStorage);
   const { enabled } = useStorage(extensionEnabledStorage);
   const { language } = useStorage(languageStorage);
+  const { rate: storedRate } = useStorage(ttsRateStorage);
   const { template: speechTemplate } = useStorage(speechTemplateStorage);
   const { volume: storedVolume } = useStorage(ttsVolumeStorage);
   const { uri: voiceURI } = useStorage(ttsVoiceEngineStorage);
+
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
-  const [localVolume, setLocalVolume] = useState(storedVolume);
+  const [localRate, setLocalRate] = useState(storedRate);
   const [localSpeechTemplate, setLocalSpeechTemplate] = useState(speechTemplate ?? '');
+  const [localVolume, setLocalVolume] = useState(storedVolume);
   const [isTestingVoice, setIsTestingVoice] = useState(false);
+
   const currentVolumeRef = useRef(storedVolume);
   const cancelTestSpeechRef = useRef<(() => void) | null>(null);
 
@@ -70,9 +75,8 @@ const Options = () => {
     languageStorage.setLanguage(event.target.value);
   };
 
-  const debouncedVolumeUpdate = useDebounce((newVolume: number) => {
-    ttsVolumeStorage.setVolume(newVolume);
-  }, 300);
+  const debouncedVolumeUpdate = useDebounce(ttsVolumeStorage.setVolume, 300);
+  const debouncedRateUpdate = useDebounce(ttsRateStorage.setRate, 300);
   const debouncedSpeechTemplateUpdate = useDebounce((newTemplate: string) => {
     // Set the template to `null` if the input is blank
     speechTemplateStorage.setTemplate(newTemplate?.trim() || null);
@@ -84,6 +88,11 @@ const Options = () => {
     currentVolumeRef.current = newVolume; // Update the ref to track current volume
     setLocalVolume(newVolume); // Update UI immediately
     debouncedVolumeUpdate(newVolume); // Debounce storage write
+  };
+  const handleRateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newRate = parseFloat(event.target.value);
+    setLocalRate(newRate); // Update UI immediately
+    debouncedRateUpdate(newRate); // Debounce storage write
   };
   const handleSpeechTemplateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newTemplate = event.target.value;
@@ -98,7 +107,7 @@ const Options = () => {
 
   const testVoice = () => {
     setIsTestingVoice(true);
-    const speech = speakText(t('voiceTestMessage'), voiceURI);
+    const speech = speakText(t('voiceTestMessage'));
     cancelTestSpeechRef.current = speech.cancel;
 
     speech.promise.finally(() => {
@@ -143,6 +152,9 @@ const Options = () => {
   useEffect(() => {
     setLocalVolume(storedVolume);
   }, [storedVolume]);
+  useEffect(() => {
+    setLocalRate(storedRate);
+  }, [storedRate]);
   useEffect(() => {
     setLocalSpeechTemplate(speechTemplate ?? '');
   }, [speechTemplate]);
@@ -229,6 +241,23 @@ const Options = () => {
             />
             <span className="w-12 text-sm font-medium">{Math.round(localVolume * 100)}%</span>
           </div>
+        </div>
+        <div>
+          <h2>{t('speechRate')}</h2>
+          <div className="flex items-center space-x-4">
+            <input
+              type="range"
+              min="0.1"
+              max="10"
+              step="0.1"
+              value={localRate}
+              onChange={handleRateChange}
+              disabled={isTestingVoice}
+              className="w-72"
+            />
+            <span className="w-12 text-sm font-medium">{localRate.toFixed(1)}x</span>
+          </div>
+          <p className={cn('mt-2 text-sm text-red-500', localRate <= 2.0 && 'invisible')}>{t('speechRateNote')}</p>
         </div>
         <div>
           <h2>{t('speechTemplate')}</h2>

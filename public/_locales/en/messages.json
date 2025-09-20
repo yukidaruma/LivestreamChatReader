@@ -71,6 +71,12 @@
   "voiceVolume": {
     "message": "Voice Volume"
   },
+  "speechRate": {
+    "message": "Speech Rate"
+  },
+  "speechRateNote": {
+    "message": "Note: Some voices may have problems speaking at rates above 2.0."
+  },
   "speechTemplate": {
     "message": "Speech Template"
   },

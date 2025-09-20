@@ -1,4 +1,4 @@
-import { ttsVolumeStorage } from '@extension/storage';
+import { ttsRateStorage, ttsVoiceEngineStorage, ttsVolumeStorage } from '@extension/storage';
 import type { logger as loggerType } from './logger';
 import type { BackgroundRequest, InferBackgroundResponse, TTSSpeakRequest } from './message-types';
 
@@ -14,21 +14,24 @@ type CancellableSpeech = {
   cancel: () => Promise<void>;
 };
 
-export const speakText = (
-  text: string,
-  voiceURI: string | null,
-  { logger }: { logger?: typeof loggerType } = {},
-): CancellableSpeech => {
+export const speakText = (text: string, { logger }: { logger?: typeof loggerType } = {}): CancellableSpeech => {
   const requestId = generateRequestId();
   let resolved = false;
 
   // Build the TTS request data
+
+  const { uri: voiceURI } = ttsVoiceEngineStorage.getSnapshot() ?? { uri: '' };
 
   const speakRequestData: TTSSpeakRequest['data'] = {
     text,
     voiceURI,
     requestId,
   };
+
+  const { rate } = ttsRateStorage.getSnapshot() ?? {};
+  if (rate) {
+    speakRequestData.rate = rate;
+  }
 
   const { volume } = ttsVolumeStorage.getSnapshot() ?? {};
   if (volume) {

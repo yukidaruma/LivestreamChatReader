@@ -71,6 +71,12 @@
   "voiceVolume": {
     "message": "音量"
   },
+  "speechRate": {
+    "message": "読み上げ速度"
+  },
+  "speechRateNote": {
+    "message": "注意: 一部の音声は2.0より大きい速度で正常に動作しない場合があります。"
+  },
   "speechTemplate": {
     "message": "読み上げテンプレート"
   },

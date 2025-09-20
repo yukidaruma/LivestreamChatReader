@@ -149,6 +149,14 @@ export type ThemeStateType = {
 };
 export type ThemeStorageType = ToggleStorageType<ThemeStateType>;
 
+// tts-rate-storage.ts
+export type TtsRateStateType = {
+  rate: number; // 0.1 to 10.0 (Web Speech API range)
+};
+export type TtsRateStorageType = BaseStorageType<TtsRateStateType> & {
+  setRate: (rate: number) => Promise<void>;
+};
+
 // tts-volume-storage.ts
 export type TtsVolumeStateType = {
   volume: number; // 0.0 to 1.0

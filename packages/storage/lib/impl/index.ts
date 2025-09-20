@@ -5,5 +5,6 @@ export * from './log-storage';
 export * from './speech-template-storage';
 export * from './text-filter-storage';
 export * from './theme-storage';
+export * from './tts-rate-storage';
 export * from './tts-voice-engine-storage';
 export * from './tts-volume-storage';

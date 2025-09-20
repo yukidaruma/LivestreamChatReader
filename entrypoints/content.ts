@@ -13,12 +13,7 @@ import {
   waitForElementRemoval,
 } from '@extension/shared/lib/utils';
 import { applyTextFilters } from '@extension/shared/lib/utils/text-filter';
-import {
-  extensionEnabledStorage,
-  speechTemplateStorage,
-  textFilterStorage,
-  ttsVoiceEngineStorage,
-} from '@extension/storage';
+import { extensionEnabledStorage, speechTemplateStorage, textFilterStorage } from '@extension/storage';
 import type { SiteConfig, SiteId } from '@extension/shared/lib/utils/site-config';
 import type { TextFilter } from '@extension/storage/lib/base';
 
@@ -109,13 +104,12 @@ const createMonitor =
       isProcessing = true;
 
       const { enabled } = await extensionEnabledStorage.get();
-      const { uri: storedVoiceURI } = await ttsVoiceEngineStorage.get();
 
       while (enabled && messageQueue.length > 0) {
         const message = messageQueue.shift()!;
         logger.debug(`Start speech: "${message}"`);
 
-        const { promise, cancel } = speakText(message, storedVoiceURI, { logger });
+        const { promise, cancel } = speakText(message, { logger });
         cancelSpeech = cancel;
 
         const unsubscribe = extensionEnabledStorage.subscribe(() => {

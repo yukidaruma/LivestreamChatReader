@@ -5,10 +5,11 @@ type BackgroundRequestDataPlaceholder = Record<string, never>;
 export type TTSSpeakRequest = {
   type: 'TTS_SPEAK_REQUEST';
   data: {
+    rate?: number;
+    requestId: string;
     text: string;
     voiceURI: string | null;
     volume?: number;
-    requestId: string;
   };
 };
 

@@ -15,11 +15,12 @@ type BackgroundRequestHandler<T extends BackgroundRequest> = (
 
 // TTS functionality using browser.tts.speak()
 const handleTTSSpeak: BackgroundRequestHandler<TTSSpeakRequest> = async (request, sendResponse) => {
-  const { text, voiceURI, volume, requestId } = request.data;
+  const { rate, requestId, text, voiceURI, volume } = request.data;
 
   try {
     // Prepare TTS options
     const ttsOptions: Browser.tts.TtsOptions = {
+      rate,
       voiceName: voiceURI ?? undefined,
       volume,
       onEvent: (event: Browser.tts.TtsEvent) => {
