@@ -1,16 +1,15 @@
 @import '@extension/ui/global.css';
 
-#app-container {
-  width: 100vw;
+html {
+  overflow-y: scroll !important;
+  max-width: 100vw;
   min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .App {
   @apply p-6;
-  width: 100vw;
-  min-height: 100vh;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
 }
 
 h1 {
