@@ -1,5 +1,6 @@
 /* eslint-disable func-style */
 import { main } from '../content';
+import { HTML_DATA_THEME_KEY } from '@extension/shared';
 
 // Elements
 const container = document.getElementById('items')!;
@@ -206,7 +207,7 @@ window.addEventListener('load', function () {
 if (!navigator.webdriver) {
   browser.storage.sync.get('theme-storage-key', function (data) {
     const theme = data['theme-storage-key']?.theme ?? 'light';
-    document.body.classList.add(theme);
+    document.documentElement.setAttribute(HTML_DATA_THEME_KEY, theme);
   });
 }
 

@@ -5,13 +5,13 @@ import {
   t,
   useDebounce,
   useStorage,
+  useThemeStorage,
   useSubscribeIcon,
   withErrorBoundary,
   withSuspense,
 } from '@extension/shared';
 import { DEFAULT_SPEECH_TEMPLATE, speakText } from '@extension/shared/lib/utils';
 import {
-  exampleThemeStorage,
   extensionEnabledStorage,
   languageStorage,
   speechTemplateStorage,
@@ -19,10 +19,9 @@ import {
   ttsVoiceEngineStorage,
   ttsVolumeStorage,
 } from '@extension/storage';
-import { cn, ErrorDisplay, getIconColor, LoadingSpinner, ToggleButton } from '@extension/ui';
+import { cn, ErrorDisplay, LoadingSpinner, ToggleButton } from '@extension/ui';
 import * as icons from '@extension/ui/lib/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
-
 import './Options.css';
 
 // Valid field names that can be used in speech templates
@@ -43,7 +42,7 @@ const validateSpeechTemplate = (template: string): string[] | null => {
 };
 
 const Options = () => {
-  const { isLight } = useStorage(exampleThemeStorage);
+  const { isLight, toggle: toggleThemeStorage } = useThemeStorage();
   const { enabled } = useStorage(extensionEnabledStorage);
   const { language } = useStorage(languageStorage);
   const { rate: storedRate } = useStorage(ttsRateStorage);
@@ -66,8 +65,6 @@ const Options = () => {
 
   // Check if we're in inline mode (embedded in iframe)
   const isInline = new URLSearchParams(window.location.search).has('inline');
-
-  const iconColor = getIconColor(isLight);
 
   useSubscribeIcon();
 
@@ -171,7 +168,7 @@ const Options = () => {
   }, [enabled, isTestingVoice]);
 
   return (
-    <div className={cn('App', isLight ? 'light' : 'dark')}>
+    <div className="App">
       <h1 className="mb-6 text-2xl font-bold">{t('settingsTitle')}</h1>
 
       <div className="space-y-6">
@@ -187,7 +184,7 @@ const Options = () => {
           <h2>{t('theme')}</h2>
           <ToggleButton
             checked={isLight}
-            onChange={exampleThemeStorage.toggle}
+            onChange={toggleThemeStorage}
             label={isLight ? t('lightMode') : t('darkMode')}
           />
         </div>
@@ -312,14 +309,14 @@ const Options = () => {
                   target="_blank"
                   title={t('openPage', t('githubRepository'))}
                   aria-label={t('githubRepository')}>
-                  <icons.Github color={iconColor} size="32" />
+                  <icons.Github color="var(--icon-primary)" size="32" />
                 </a>
                 <a
                   href={PROJECT_URL_OBJECT.x}
                   target="_blank"
                   title={t('openPage', t('xProfile'))}
                   aria-label={t('xProfile')}>
-                  <icons.X color={iconColor} size="32" />
+                  <icons.X color="var(--icon-primary)" size="32" />
                 </a>
               </div>
             </div>

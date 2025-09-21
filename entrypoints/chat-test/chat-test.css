@@ -16,13 +16,13 @@ yt-live-chat-text-message-renderer {
 yt-live-chat-text-message-renderer.auto-message {
   @apply bg-blue-100;
 }
-.dark yt-live-chat-text-message-renderer.auto-message {
+[data-theme='dark'] yt-live-chat-text-message-renderer.auto-message {
   @apply bg-blue-950;
 }
 #author-name {
   @apply mr-1 font-semibold text-blue-700;
 }
-.dark #author-name {
+[data-theme='dark'] #author-name {
   @apply text-blue-300;
 }
 

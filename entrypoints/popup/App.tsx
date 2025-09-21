@@ -1,22 +1,21 @@
-import { t, useStorage, useSubscribeIcon, withErrorBoundary, withSuspense } from '@extension/shared';
-import { exampleThemeStorage, extensionEnabledStorage } from '@extension/storage';
-import { cn, ErrorDisplay, getIconColor, icons, LoadingSpinner, ToggleButton } from '@extension/ui';
+import { t, useStorage, useSubscribeIcon, useThemeStorage, withErrorBoundary, withSuspense } from '@extension/shared';
+import { extensionEnabledStorage } from '@extension/storage';
+import { ErrorDisplay, icons, LoadingSpinner, ToggleButton } from '@extension/ui';
 
 import './App.css';
 
 const Popup = () => {
-  const { isLight } = useStorage(exampleThemeStorage);
   const { enabled } = useStorage(extensionEnabledStorage);
-  const iconColor = getIconColor(isLight);
 
+  useThemeStorage(); // Ensure data-theme is set for <html>
   useSubscribeIcon();
 
   return (
-    <div className={cn('App h-screen w-full', isLight ? 'light' : 'dark')}>
+    <div className="App h-screen w-full">
       <header className="App-header flex items-center justify-between">
         <h1 className="text-xl font-semibold">{t('extensionNameShort')}</h1>
         <a href="/options.html" target="_blank" title={t('openPage', t('settings'))} aria-label={t('settings')}>
-          <icons.Configure color={iconColor} size="24" />
+          <icons.Configure color="var(--icon-primary)" size="24" />
         </a>
       </header>
 

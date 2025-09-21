@@ -1,6 +1,6 @@
 import './SidePanel.css';
-import { t, logger, useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
-import { exampleThemeStorage, logConsoleStorage, logStorage } from '@extension/storage';
+import { t, logger, useStorage, useThemeStorage, withErrorBoundary, withSuspense } from '@extension/shared';
+import { logConsoleStorage, logStorage } from '@extension/storage';
 import { cn, ErrorDisplay, LoadingSpinner, ToggleButton } from '@extension/ui';
 import { useEffect, useState } from 'react';
 import type { LogEntry } from '@extension/storage/lib/base/types';
@@ -8,7 +8,8 @@ import type { LogEntry } from '@extension/storage/lib/base/types';
 const manifestJson = browser.runtime.getManifest();
 
 const SidePanel = () => {
-  const { isLight } = useStorage(exampleThemeStorage);
+  useThemeStorage(); // Ensure data-theme is set for <html>
+
   const { enabled: consoleLogging } = useStorage(logConsoleStorage);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [storageData, setStorageData] = useState<Record<string, unknown>>({});
@@ -114,7 +115,7 @@ const SidePanel = () => {
   const copyStorage = () => copyToClipboard(storageData, 'storage');
 
   return (
-    <div className={cn('App', isLight ? 'light' : 'dark')}>
+    <div className="App">
       <div className="px-6 pt-6">
         <div className="warning">
           <div className="flex items-center">
