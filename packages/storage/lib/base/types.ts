@@ -102,23 +102,20 @@ export type BaseTextFilter = {
 };
 export type PatternFilter = BaseTextFilter & {
   type: 'pattern';
+  command?: never;
   isRegex?: boolean;
-  flags?: string;
   pattern: string;
   replacement: string;
 };
-export type EndCommandFilter = BaseTextFilter & {
+export type MuteCommandFilter = BaseTextFilter & {
   type: 'command';
-  command: 'end';
-  pattern?: string;
+  command: 'mute';
   isRegex?: boolean;
-  flags?: string; // Only used when isRegex is true
-  args?: never;
+  pattern?: string;
   replacement?: never;
 };
-
-export type CommandFilter = EndCommandFilter;
-
+export type CommandFilter = MuteCommandFilter;
+export type FilterCommandName = CommandFilter['command'];
 export type TextFilter = PatternFilter | CommandFilter;
 export type TextFilterStateType = {
   filters: TextFilter[];

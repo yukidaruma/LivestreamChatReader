@@ -1,3 +1,4 @@
+import { validateSpeechTemplate } from './util';
 import rawChangelog from '../../CHANGELOG.md?raw';
 import {
   PROJECT_URL_OBJECT,
@@ -6,37 +7,21 @@ import {
   useDebounce,
   useStorage,
   useSubscribeIcon,
+  DEFAULT_SPEECH_TEMPLATE,
+  speakText,
 } from '@extension/shared';
-import { DEFAULT_SPEECH_TEMPLATE, speakText } from '@extension/shared/lib/utils';
 import {
   extensionEnabledStorage,
   languageStorage,
   speechTemplateStorage,
+  textFilterStorage,
   themeStorage,
   ttsRateStorage,
   ttsVoiceEngineStorage,
   ttsVolumeStorage,
 } from '@extension/storage';
-import { cn, IconButton, LabeledToggleButton } from '@extension/ui';
-import * as icons from '@extension/ui/lib/icons';
+import { cn, IconButton, LabeledToggleButton, icons } from '@extension/ui';
 import { useEffect, useMemo, useRef, useState } from 'react';
-
-// Valid field names that can be used in speech templates
-const VALID_FIELD_NAMES = ['name', 'body'];
-
-const validateSpeechTemplate = (template: string): string[] | null => {
-  const fieldNameMatches = template.match(/%\((\w*)\)/g);
-
-  if (!fieldNameMatches) {
-    return null;
-  }
-
-  const extractedFieldNames = fieldNameMatches.map(match => match.replace(/%\((\w*)\)/, '$1'));
-
-  const invalidFieldNames = [...new Set(extractedFieldNames)].filter(name => !VALID_FIELD_NAMES.includes(name));
-
-  return invalidFieldNames.length > 0 ? invalidFieldNames : null;
-};
 
 const Settings = () => {
   const { enabled } = useStorage(extensionEnabledStorage);
@@ -46,6 +31,7 @@ const Settings = () => {
   const { template: speechTemplate } = useStorage(speechTemplateStorage);
   const { volume: storedVolume } = useStorage(ttsVolumeStorage);
   const { uri: voiceURI } = useStorage(ttsVoiceEngineStorage);
+  const { filters } = useStorage(textFilterStorage);
 
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [localRate, setLocalRate] = useState(storedRate);
@@ -59,6 +45,7 @@ const Settings = () => {
   const changelog = rawChangelog.replace(/^# Changelog/, '').trim();
 
   const invalidFieldNames = useMemo(() => validateSpeechTemplate(localSpeechTemplate), [localSpeechTemplate]);
+  const enabledFilterCount = useMemo(() => filters.filter(filter => filter.enabled).length, [filters]);
 
   // Check if we're in inline mode (embedded in iframe)
   const isInline = new URLSearchParams(window.location.search).has('inline');
@@ -279,6 +266,14 @@ const Settings = () => {
               </p>
             </div>
           </div>
+        </div>
+
+        <div>
+          <div className="mb-2 flex items-center space-x-2">
+            <h2 className="mb-0!">{t('filterSettings')}</h2>
+            <span className="text-secondary text-sm">{t('filtersInUse', enabledFilterCount.toString())}</span>
+          </div>
+          <a href="#filter">{t('openPage', t('filterSettings'))}</a>
         </div>
 
         <div>

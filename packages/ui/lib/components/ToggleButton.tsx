@@ -13,7 +13,7 @@ type LabeledToggleButtonProps = ToggleButtonProps & {
 };
 
 export const ToggleButton = ({ checked, onChange, className, srOnlyLabel }: ToggleButtonProps) => (
-  <label className={cn('cursor-pointer', className)}>
+  <label className={className}>
     {srOnlyLabel && <span className="sr-only">{srOnlyLabel}</span>}
     <input type="checkbox" checked={checked} onChange={onChange} className="sr-only" />
     <div
@@ -34,9 +34,9 @@ export const ToggleButton = ({ checked, onChange, className, srOnlyLabel }: Togg
 export const LabeledToggleButton = (props: LabeledToggleButtonProps) => {
   const { currentState, description, ...restProps } = props;
   return (
-    <label className={cn('cursor-pointer')}>
+    <label>
       <div className="flex items-center gap-2">
-        {description && <span className="text-secondary flex-1 text-sm select-none">{description}</span>}
+        {description && <span className="flex-1 select-none">{description}</span>}
         <ToggleButton {...restProps} />
       </div>
       {currentState && <div className="mt-1 text-xs text-gray-500 select-none">{currentState}</div>}

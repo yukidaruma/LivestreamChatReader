@@ -6,6 +6,7 @@ type BaseIconButtonProps = {
   icon: ComponentType<{ color?: string; size?: string | number }>;
   color?: string;
   iconSize?: IconProps['size'];
+  outline?: boolean;
 };
 
 type HTMLButtonProps = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;
@@ -24,7 +25,8 @@ export const IconButton = (props: IconButtonProps) => {
   const {
     icon: Icon,
     iconSize,
-    color = 'var(--icon-primary)',
+    color = 'var(--text-primary)',
+    outline = false,
     className,
     children,
     href,
@@ -33,7 +35,13 @@ export const IconButton = (props: IconButtonProps) => {
   } = props;
 
   const button = (
-    <button {...restProps} className={cn('inline-flex items-center justify-center rounded p-2!', className)}>
+    <button
+      {...restProps}
+      className={cn(
+        'inline-flex items-center justify-center rounded p-2!',
+        outline && 'border-transparent! not-hover:bg-transparent!',
+        className,
+      )}>
       <Icon color={color} size={iconSize} />
       {children}
     </button>

@@ -54,6 +54,7 @@ export default defineConfig([
       },
     },
     rules: {
+      'jsx-a11y/label-has-associated-control': 'off',
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
       'prefer-const': 'error',

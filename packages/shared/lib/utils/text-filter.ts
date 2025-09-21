@@ -1,32 +1,23 @@
 import type { logger as loggerType } from './logger';
-import type { CommandFilter, TextFilter } from '@extension/storage/lib/base/types';
+import type { CommandFilter, TextFilter } from '@extension/storage';
 
 /** @returns Transformed text, or null if the filtering should be terminated */
 const executeCommand = (text: string, filter: CommandFilter, logger?: typeof loggerType): string | null => {
   switch (filter.command) {
-    case 'end': {
-      // If pattern provided, check if pattern matches before ending
+    case 'mute': {
       if (filter.pattern) {
-        const { pattern, isRegex, flags } = filter;
-        let matches = false;
-
-        if (isRegex) {
-          try {
-            const regex = new RegExp(pattern, flags || '');
-            matches = regex.test(text);
-          } catch (error) {
-            logger?.warn(`Invalid regex in end command: ${pattern}`, error);
-            return text; // Invalid regex, continue filtering
+        try {
+          const regex = new RegExp(filter.isRegex ? filter.pattern : RegExp.escape(filter.pattern), 'i');
+          if (regex.test(text)) {
+            return null;
           }
-        } else {
-          matches = text.includes(pattern);
-        }
-
-        if (!matches) {
-          return text; // Pattern doesn't match, continue filtering
+        } catch (error) {
+          logger?.warn(`Invalid pattern in mute command: ${filter.pattern}`, error);
         }
       }
-      return null; // End filtering
+
+      // When regex error occured or pattern didn't match, continue filtering
+      return text;
     }
     default:
       logger?.warn(`Unknown command: ${filter.command}`);
@@ -52,12 +43,8 @@ export const applyTextFilters = (
     switch (filter.type) {
       case 'pattern': {
         try {
-          if (filter.isRegex) {
-            const regex = new RegExp(filter.pattern, filter.flags ?? '');
-            result = result.replace(regex, filter.replacement);
-          } else {
-            result = result.replaceAll(filter.pattern, filter.replacement);
-          }
+          const regex = new RegExp(filter.isRegex ? filter.pattern : RegExp.escape(filter.pattern), 'ig');
+          result = result.replaceAll(regex, filter.replacement);
         } catch (error) {
           logger?.warn(`Invalid pattern in filter ${filter.id}:`, error);
         }

@@ -6,6 +6,7 @@ html {
   min-height: 100vh;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  padding-right: 0 !important; /* https://github.com/tailwindlabs/headlessui/issues/762 */
 }
 
 .App {

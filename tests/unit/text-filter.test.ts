@@ -76,41 +76,6 @@ describe('Text Filter Functions', () => {
         assert.equal(result, 'Hello [TEST] world');
       });
 
-      it('should apply regex replacement without flags', () => {
-        const filters: TextFilter[] = [
-          {
-            id: 1,
-            enabled: true,
-            target: 'output',
-            type: 'pattern',
-            isRegex: true,
-            pattern: 'w',
-            replacement: '笑',
-          },
-        ];
-
-        const result = applyTextFilters('www', filters);
-        assert.equal(result, '笑ww'); // Regex without 'g' flag should replace only first match
-      });
-
-      it('should apply regex replacement with flags', () => {
-        const filters: TextFilter[] = [
-          {
-            id: 1,
-            enabled: true,
-            target: 'output',
-            type: 'pattern',
-            isRegex: true,
-            flags: 'gi',
-            pattern: '[wｗ]{3,}',
-            replacement: 'w',
-          },
-        ];
-
-        const result = applyTextFilters('すごいwWｗＷ', filters);
-        assert.equal(result, 'すごいw');
-      });
-
       it('should support capture groups in regex replacement', () => {
         const filters: TextFilter[] = [
           {
@@ -124,8 +89,8 @@ describe('Text Filter Functions', () => {
           },
         ];
 
-        const result = applyTextFilters('Hello World', filters);
-        assert.equal(result, 'World Hello');
+        const result = applyTextFilters('hello world', filters);
+        assert.equal(result, 'world hello');
       });
 
       it('should skip disabled filter', () => {
@@ -152,7 +117,6 @@ describe('Text Filter Functions', () => {
             target: 'output',
             type: 'pattern',
             isRegex: true,
-            flags: 'Z', // Invalid flag
             pattern: '[a-z', // Invalid regex
             replacement: 'X',
           },
@@ -163,20 +127,20 @@ describe('Text Filter Functions', () => {
       });
     });
 
-    describe('command filters', () => {
-      it('should terminate filtering with end command', () => {
+    describe('command filters: end', () => {
+      it('should not work without pattern', () => {
         const filters: TextFilter[] = [
           {
             id: 1,
             enabled: true,
             target: 'output',
             type: 'command',
-            command: 'end',
+            command: 'mute',
           },
         ];
 
         const result = applyTextFilters('Hello World!', filters);
-        assert.equal(result, '');
+        assert.equal(result, 'Hello World!');
       });
 
       it('should terminate filtering and ignore subsequent filters', () => {
@@ -194,7 +158,8 @@ describe('Text Filter Functions', () => {
             enabled: true,
             target: 'output',
             type: 'command',
-            command: 'end',
+            command: 'mute',
+            pattern: 'Hi World!',
           },
           {
             id: 3,
@@ -217,7 +182,7 @@ describe('Text Filter Functions', () => {
             enabled: true,
             target: 'output',
             type: 'command',
-            command: 'unknown',
+            command: 'unknown' as any,
           },
         ];
 
@@ -225,7 +190,7 @@ describe('Text Filter Functions', () => {
         assert.equal(result, 'Hello World!');
       });
 
-      it('should skip disabled end command', () => {
+      it('should skip disabled mute command', () => {
         const filters: TextFilter[] = [
           {
             id: 1,
@@ -240,7 +205,9 @@ describe('Text Filter Functions', () => {
             enabled: false,
             target: 'output',
             type: 'command',
-            command: 'end',
+            command: 'mute',
+            isRegex: true,
+            pattern: '^', // would match any text if enabled
           },
           {
             id: 3,
@@ -256,7 +223,7 @@ describe('Text Filter Functions', () => {
         assert.equal(result, 'Hi Universe!');
       });
 
-      it('should apply end command for field-specific filters', () => {
+      it('should apply mute command for field-specific filters', () => {
         const filters: TextFilter[] = [
           {
             id: 1,
@@ -273,7 +240,8 @@ describe('Text Filter Functions', () => {
             target: 'field',
             fieldName: 'body',
             type: 'command',
-            command: 'end',
+            command: 'mute',
+            pattern: 'Hi',
           },
         ];
 
@@ -284,14 +252,14 @@ describe('Text Filter Functions', () => {
         assert.equal(result2, 'Hello World!');
       });
 
-      it('should handle end command with text pattern argument', () => {
+      it('should handle mute command with text pattern argument', () => {
         const filters: TextFilter[] = [
           {
             id: 1,
             enabled: true,
             target: 'output',
             type: 'command',
-            command: 'end',
+            command: 'mute',
             pattern: 'World',
           },
         ];
@@ -300,14 +268,14 @@ describe('Text Filter Functions', () => {
         assert.equal(result, '');
       });
 
-      it('should not end when text pattern does not match', () => {
+      it('should not mute when text pattern does not match', () => {
         const filters: TextFilter[] = [
           {
             id: 1,
             enabled: true,
             target: 'output',
             type: 'command',
-            command: 'end',
+            command: 'mute',
             pattern: 'NotFound',
           },
           {
@@ -324,14 +292,14 @@ describe('Text Filter Functions', () => {
         assert.equal(result, 'Hi World!');
       });
 
-      it('should handle end command with regexp pattern argument', () => {
+      it('should handle mute command with regexp pattern argument', () => {
         const filters: TextFilter[] = [
           {
             id: 1,
             enabled: true,
             target: 'output',
             type: 'command',
-            command: 'end',
+            command: 'mute',
             isRegex: true,
             pattern: 'W\\w+d',
           },
@@ -341,14 +309,14 @@ describe('Text Filter Functions', () => {
         assert.equal(result, '');
       });
 
-      it('should not end when regexp pattern does not match', () => {
+      it('should not mute when regexp pattern does not match', () => {
         const filters: TextFilter[] = [
           {
             id: 1,
             enabled: true,
             target: 'output',
             type: 'command',
-            command: 'end',
+            command: 'mute',
             isRegex: true,
             pattern: '^Goodbye',
           },
@@ -366,17 +334,92 @@ describe('Text Filter Functions', () => {
         assert.equal(result, 'Hi World!');
       });
 
-      it('should handle end command with regexp flags', () => {
+      describe('case insensitive matching', () => {
+        it('should use case insensitive match for replacement', () => {
+          const filters: TextFilter[] = [
+            {
+              id: 1,
+              enabled: true,
+              target: 'output',
+              type: 'pattern',
+              isRegex: true,
+              pattern: 'W',
+              replacement: '笑',
+            },
+          ];
+
+          const result = applyTextFilters('www', filters);
+          assert.equal(result, '笑笑笑');
+        });
+
+        it('should use case insensitive match for replacement', () => {
+          const filters: TextFilter[] = [
+            {
+              id: 1,
+              enabled: true,
+              target: 'output',
+              type: 'pattern',
+              isRegex: true,
+              pattern: '[wｗ]',
+              replacement: 'w',
+            },
+          ];
+
+          const result = applyTextFilters('すごいWＷ', filters);
+          assert.equal(result, 'すごいww');
+        });
+
+        it('should use case insensitive match for command with text pattern', () => {
+          const filters: TextFilter[] = [
+            {
+              id: 1,
+              enabled: true,
+              target: 'output',
+              type: 'command',
+              command: 'mute',
+              pattern: 'hello',
+            },
+          ];
+
+          const result = applyTextFilters('Hello World!', filters);
+          assert.equal(result, '');
+        });
+
+        it('should use case insensitive match for command with regex', () => {
+          const filters: TextFilter[] = [
+            {
+              id: 1,
+              enabled: true,
+              target: 'output',
+              type: 'command',
+              command: 'mute',
+              isRegex: true,
+              pattern: 'hello',
+            },
+          ];
+
+          const result = applyTextFilters('Hello World!', filters);
+          assert.equal(result, '');
+        });
+      });
+
+      it('should evaluate mute pattern against text modified by previous filters', () => {
         const filters: TextFilter[] = [
           {
             id: 1,
             enabled: true,
             target: 'output',
+            type: 'pattern',
+            pattern: 'Hello',
+            replacement: 'Goodbye',
+          },
+          {
+            id: 2,
+            enabled: true,
+            target: 'output',
             type: 'command',
-            command: 'end',
-            isRegex: true,
-            pattern: 'hello',
-            flags: 'i',
+            command: 'mute',
+            pattern: 'Goodbye',
           },
         ];
 
@@ -487,7 +530,6 @@ describe('Text Filter Functions', () => {
             fieldName: 'name',
             type: 'pattern',
             isRegex: true,
-            flags: 'gi',
             pattern: '.',
             replacement: '',
           },
@@ -498,7 +540,6 @@ describe('Text Filter Functions', () => {
             target: 'output',
             type: 'pattern',
             isRegex: true,
-            flags: 'gi',
             pattern: '.',
             replacement: '',
           },

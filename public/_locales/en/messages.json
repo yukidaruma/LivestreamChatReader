@@ -11,12 +11,6 @@
     "description": "Short extension name used in UI",
     "message": "Livestream Chat Reader"
   },
-  "toggleTheme": {
-    "message": "Toggle theme"
-  },
-  "toggleExtension": {
-    "message": "Toggle extension"
-  },
   "changelog": {
     "message": "Update History"
   },
@@ -25,6 +19,18 @@
   },
   "contacts": {
     "message": "Contacts"
+  },
+  "save": {
+    "message": "Save"
+  },
+  "delete": {
+    "message": "Delete"
+  },
+  "name": {
+    "message": "username"
+  },
+  "body": {
+    "message": "message body"
   },
   "enabled": {
     "message": "Enabled"
@@ -95,31 +101,82 @@
   "testPage": {
     "message": "Test Page"
   },
+  "filterSettings": {
+    "message": "Filter Settings"
+  },
+  "filtersInUse": {
+    "message": "$1 filters in use"
+  },
   "githubRepository": {
     "message": "GitHub repository"
   },
   "xProfile": {
     "message": "X profile"
   },
-  "displayErrorInfo": {
-    "message": "Error occur"
-  },
-  "displayErrorDescription": {
-    "message": "Sorry, something went wrong while loading the page."
-  },
-  "displayErrorDetailsInfo": {
-    "message": "Error details:"
-  },
-  "displayErrorUnknownErrorInfo": {
-    "message": "Unknown error"
-  },
-  "displayErrorReset": {
-    "message": "Run Again"
-  },
   "debugPanel": {
     "message": "Debug Panel"
   },
   "debugPanelDescription": {
     "message": "This panel is intended for developers and advanced users only."
+  },
+  "backToSettings": {
+    "message": "Back to Settings"
+  },
+  "extensionStateDescription": {
+    "message": "Enable or disable the text-to-speech functionality for livestream chat messages."
+  },
+  "themeDescription": {
+    "message": "Choose between light and dark appearance modes."
+  },
+  "addRule": {
+    "message": "Add new rule"
+  },
+  "noFilters": {
+    "message": "No filters found."
+  },
+  "filterOrderNote": {
+    "message": "Note: Filters are applied in top-to-bottom order."
+  },
+  "confirmDeleteFilterRule": {
+    "message": "Are you sure you want to delete the filter rule for $1?"
+  },
+  "useRegularExpression": {
+    "message": "Use Regular Expression"
+  },
+  "filterPattern": {
+    "message": "Search pattern"
+  },
+  "filterPatternHint": {
+    "message": "case insensitive"
+  },
+  "filterReplacement": {
+    "message": "Replace text"
+  },
+  "filterReplacementHint": {
+    "message": "leave empty to remove"
+  },
+  "targetOutput": {
+    "message": "Final output (entire spoken text)"
+  },
+  "filterType": {
+    "message": "Filter Type"
+  },
+  "textPattern": {
+    "message": "Replacing Text"
+  },
+  "command": {
+    "message": "Command"
+  },
+  "muteCommand": {
+    "message": "Command: $1 ($2)"
+  },
+  "commandDescription_mute": {
+    "message": "Stop reading the message"
+  },
+  "filterTarget": {
+    "message": "Apply to"
+  },
+  "empty": {
+    "message": "(empty)"
   }
 }

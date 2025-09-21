@@ -1,1 +1,1 @@
-export { Configure, Github, X } from 'grommet-icons';
+export { Add, Checkmark, Close, Configure, Github, X } from 'grommet-icons';

@@ -161,7 +161,7 @@ const SidePanel = () => {
             <h3 className="text-sm font-semibold">Logs:</h3>
             <div className="ml-4 flex gap-3 space-x-1 text-xs">
               {(Object.keys(levelColors) as LogEntry['level'][]).map(level => (
-                <label key={level} className="flex cursor-pointer items-center gap-1">
+                <label key={level} className="flex items-center gap-1">
                   <input
                     type="checkbox"
                     checked={enabledLevels[level]}

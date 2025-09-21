@@ -13,13 +13,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
-
 html[data-theme='light'] {
   --text-primary: var(--color-gray-900);
   --text-secondary: var(--color-gray-700);
+  --text-accent: var(--color-blue-600);
   --bg-primary: var(--color-slate-50);
   --bg-secondary: var(--color-white);
   --bg-button: var(--color-white);
@@ -27,11 +24,11 @@ html[data-theme='light'] {
   --border-primary: var(--color-gray-300);
   --border-secondary: var(--color-gray-200);
   --border-button: var(--color-gray-500);
-  --icon-primary: var(--color-gray-800);
 }
 html[data-theme='dark'] {
   --text-primary: var(--color-gray-100);
   --text-secondary: var(--color-gray-300);
+  --text-accent: var(--color-blue-400);
   --bg-primary: var(--color-gray-800);
   --bg-secondary: var(--color-gray-700);
   --bg-button: var(--color-gray-600);
@@ -39,7 +36,6 @@ html[data-theme='dark'] {
   --border-primary: var(--color-gray-600);
   --border-secondary: var(--color-gray-500);
   --border-button: var(--color-gray-500);
-  --icon-primary: var(--color-gray-100);
 }
 
 /* Utility classes */
@@ -48,6 +44,9 @@ html[data-theme='dark'] {
 }
 .text-secondary {
   color: var(--text-secondary);
+}
+.text-accent {
+  color: var(--text-accent);
 }
 .bg-primary {
   background-color: var(--bg-primary);
@@ -78,14 +77,26 @@ html[data-theme='dark'] a:not(button a) {
   color: var(--color-blue-400);
 }
 
+code {
+  @apply rounded p-1 font-mono text-xs;
+  border: 1px solid var(--border-primary);
+  background-color: var(--bg-secondary);
+}
+
+label {
+  @apply cursor-pointer;
+}
 input,
 select,
 textarea,
 .form-control {
-  @apply max-w-72 flex-1 rounded border p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none;
+  @apply max-w-72 flex-1 rounded border p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none;
   color: var(--text-secondary);
   background-color: var(--bg-secondary);
   border-color: var(--border-primary);
+}
+.input-full :is(input, select, textarea, .form-control) {
+  @apply w-full max-w-none;
 }
 input[type='range'] {
   padding: 0;
@@ -100,8 +111,22 @@ button:hover:not(:disabled) {
   @apply transition-colors duration-150 ease-in-out;
   background-color: var(--bg-button-secondary);
 }
-input:disabled,
-select:disabled,
-button:disabled {
-  @apply disabled:cursor-not-allowed disabled:opacity-50;
+.button-bg-blue {
+  --bg-button: var(--color-blue-600);
+  --border-button: var(--color-blue-600);
+  @apply text-white;
+}
+.button-bg-blue:hover:not(:disabled) {
+  --bg-button-secondary: var(--color-blue-700);
+}
+.button-bg-red {
+  --bg-button: var(--color-red-600);
+  --border-button: var(--color-red-800);
+  @apply text-white;
+}
+.button-bg-red:hover:not(:disabled) {
+  --bg-button-secondary: var(--color-red-700);
+}
+.button-bg-blue:disabled {
+  --bg-button: var(--color-blue-300);
 }
