@@ -22,10 +22,11 @@ html[data-theme='light'] {
   --text-secondary: var(--color-gray-700);
   --bg-primary: var(--color-slate-50);
   --bg-secondary: var(--color-white);
-  --bg-button: var(--color-gray-200);
+  --bg-button: var(--color-white);
+  --bg-button-secondary: var(--color-gray-100);
   --border-primary: var(--color-gray-300);
   --border-secondary: var(--color-gray-200);
-  --border-button: var(--color-gray-400);
+  --border-button: var(--color-gray-500);
   --icon-primary: var(--color-gray-800);
 }
 html[data-theme='dark'] {
@@ -34,9 +35,10 @@ html[data-theme='dark'] {
   --bg-primary: var(--color-gray-800);
   --bg-secondary: var(--color-gray-700);
   --bg-button: var(--color-gray-600);
+  --bg-button-secondary: var(--color-gray-700);
   --border-primary: var(--color-gray-600);
   --border-secondary: var(--color-gray-500);
-  --border-button: var(--color-gray-400);
+  --border-button: var(--color-gray-500);
   --icon-primary: var(--color-gray-100);
 }
 

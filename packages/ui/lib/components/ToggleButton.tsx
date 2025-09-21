@@ -15,7 +15,7 @@ export const ToggleButton = ({ checked, onChange, label, srOnlyLabel, className 
     <div
       className={cn(
         'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
-        checked ? 'bg-blue-600' : 'bg-gray-300',
+        checked ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300 hover:bg-gray-400',
       )}>
       <span
         className={cn(

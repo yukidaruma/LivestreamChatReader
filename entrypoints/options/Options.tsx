@@ -19,7 +19,7 @@ import {
   ttsVoiceEngineStorage,
   ttsVolumeStorage,
 } from '@extension/storage';
-import { cn, ErrorDisplay, LoadingSpinner, ToggleButton } from '@extension/ui';
+import { cn, ErrorDisplay, IconButton, LoadingSpinner, ToggleButton } from '@extension/ui';
 import * as icons from '@extension/ui/lib/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import './Options.css';
@@ -304,20 +304,20 @@ const Options = () => {
             <div>
               <h1>{t('contacts')}</h1>
               <div className="space-x-2">
-                <a
+                <IconButton
+                  icon={icons.Github}
                   href={PROJECT_URL_OBJECT.url}
                   target="_blank"
                   title={t('openPage', t('githubRepository'))}
-                  aria-label={t('githubRepository')}>
-                  <icons.Github color="var(--icon-primary)" size="32" />
-                </a>
-                <a
+                  aria-label={t('githubRepository')}
+                />
+                <IconButton
+                  icon={icons.X}
                   href={PROJECT_URL_OBJECT.x}
                   target="_blank"
                   title={t('openPage', t('xProfile'))}
-                  aria-label={t('xProfile')}>
-                  <icons.X color="var(--icon-primary)" size="32" />
-                </a>
+                  aria-label={t('xProfile')}
+                />
               </div>
             </div>
           </div>

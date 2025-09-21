@@ -1,6 +1,6 @@
 import { t, useStorage, useSubscribeIcon, useThemeStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { extensionEnabledStorage } from '@extension/storage';
-import { ErrorDisplay, icons, LoadingSpinner, ToggleButton } from '@extension/ui';
+import { ErrorDisplay, IconButton, icons, LoadingSpinner, ToggleButton } from '@extension/ui';
 
 import './App.css';
 
@@ -14,9 +14,13 @@ const Popup = () => {
     <div className="App h-screen w-full">
       <header className="App-header flex items-center justify-between">
         <h1 className="text-xl font-semibold">{t('extensionNameShort')}</h1>
-        <a href="/options.html" target="_blank" title={t('openPage', t('settings'))} aria-label={t('settings')}>
-          <icons.Configure color="var(--icon-primary)" size="24" />
-        </a>
+        <IconButton
+          icon={icons.Configure}
+          href="/options.html"
+          target="_blank"
+          title={t('openPage', t('settings'))}
+          aria-label={t('settings')}
+        />
       </header>
 
       <ToggleButton
