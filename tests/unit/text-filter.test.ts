@@ -163,64 +163,50 @@ describe('Text Filter Functions', () => {
     });
 
     describe('command filters', () => {
-      it('should apply substring command with single argument', () => {
+      it('should terminate filtering with end command', () => {
         const filters: TextFilter[] = [
           {
             id: 1,
             enabled: true,
             target: 'output',
             type: 'command',
-            pattern: 'substring(5)',
+            command: 'end',
           },
         ];
 
         const result = applyTextFilters('Hello World!', filters);
-        assert.equal(result, 'Hello');
+        assert.equal(result, '');
       });
 
-      it('should apply substring command with multiple arguments', () => {
+      it('should terminate filtering and ignore subsequent filters', () => {
         const filters: TextFilter[] = [
           {
             id: 1,
             enabled: true,
             target: 'output',
-            type: 'command',
-            pattern: 'substring(6, 11)',
+            type: 'pattern',
+            pattern: 'Hello',
+            replacement: 'Hi',
           },
-        ];
-
-        const result = applyTextFilters('Hello World!', filters);
-        assert.equal(result, 'World');
-      });
-
-      it('should ignore whitespace in arguments', () => {
-        const filters: TextFilter[] = [
           {
-            id: 1,
+            id: 2,
             enabled: true,
             target: 'output',
             type: 'command',
-            pattern: 'substring( 6,　 11	)', // contains fullwidth space and tab
+            command: 'end',
           },
-        ];
-
-        const result = applyTextFilters('Hello World!', filters);
-        assert.equal(result, 'World');
-      });
-
-      it('should handle invalid command format', () => {
-        const filters: TextFilter[] = [
           {
-            id: 1,
+            id: 3,
             enabled: true,
             target: 'output',
-            type: 'command',
-            pattern: 'invalid format',
+            type: 'pattern',
+            pattern: 'World',
+            replacement: 'Universe',
           },
         ];
 
         const result = applyTextFilters('Hello World!', filters);
-        assert.equal(result, 'Hello World!');
+        assert.equal(result, '');
       });
 
       it('should ignore unknown command', () => {
@@ -230,12 +216,171 @@ describe('Text Filter Functions', () => {
             enabled: true,
             target: 'output',
             type: 'command',
-            pattern: 'unknown(10)',
+            command: 'unknown',
           },
         ];
 
         const result = applyTextFilters('Hello World!', filters);
         assert.equal(result, 'Hello World!');
+      });
+
+      it('should skip disabled end command', () => {
+        const filters: TextFilter[] = [
+          {
+            id: 1,
+            enabled: true,
+            target: 'output',
+            type: 'pattern',
+            pattern: 'Hello',
+            replacement: 'Hi',
+          },
+          {
+            id: 2,
+            enabled: false,
+            target: 'output',
+            type: 'command',
+            command: 'end',
+          },
+          {
+            id: 3,
+            enabled: true,
+            target: 'output',
+            type: 'pattern',
+            pattern: 'World',
+            replacement: 'Universe',
+          },
+        ];
+
+        const result = applyTextFilters('Hello World!', filters);
+        assert.equal(result, 'Hi Universe!');
+      });
+
+      it('should apply end command for field-specific filters', () => {
+        const filters: TextFilter[] = [
+          {
+            id: 1,
+            enabled: true,
+            target: 'field',
+            fieldName: 'body',
+            type: 'pattern',
+            pattern: 'Hello',
+            replacement: 'Hi',
+          },
+          {
+            id: 2,
+            enabled: true,
+            target: 'field',
+            fieldName: 'body',
+            type: 'command',
+            command: 'end',
+          },
+        ];
+
+        const result1 = applyTextFilters('Hello World!', filters, { fieldName: 'body' });
+        assert.equal(result1, '');
+
+        const result2 = applyTextFilters('Hello World!', filters, { fieldName: 'name' });
+        assert.equal(result2, 'Hello World!');
+      });
+
+      it('should handle end command with text pattern argument', () => {
+        const filters: TextFilter[] = [
+          {
+            id: 1,
+            enabled: true,
+            target: 'output',
+            type: 'command',
+            command: 'end',
+            pattern: 'World',
+          },
+        ];
+
+        const result = applyTextFilters('Hello World!', filters);
+        assert.equal(result, '');
+      });
+
+      it('should not end when text pattern does not match', () => {
+        const filters: TextFilter[] = [
+          {
+            id: 1,
+            enabled: true,
+            target: 'output',
+            type: 'command',
+            command: 'end',
+            pattern: 'NotFound',
+          },
+          {
+            id: 2,
+            enabled: true,
+            target: 'output',
+            type: 'pattern',
+            pattern: 'Hello',
+            replacement: 'Hi',
+          },
+        ];
+
+        const result = applyTextFilters('Hello World!', filters);
+        assert.equal(result, 'Hi World!');
+      });
+
+      it('should handle end command with regexp pattern argument', () => {
+        const filters: TextFilter[] = [
+          {
+            id: 1,
+            enabled: true,
+            target: 'output',
+            type: 'command',
+            command: 'end',
+            isRegex: true,
+            pattern: 'W\\w+d',
+          },
+        ];
+
+        const result = applyTextFilters('Hello World!', filters);
+        assert.equal(result, '');
+      });
+
+      it('should not end when regexp pattern does not match', () => {
+        const filters: TextFilter[] = [
+          {
+            id: 1,
+            enabled: true,
+            target: 'output',
+            type: 'command',
+            command: 'end',
+            isRegex: true,
+            pattern: '^Goodbye',
+          },
+          {
+            id: 2,
+            enabled: true,
+            target: 'output',
+            type: 'pattern',
+            pattern: 'Hello',
+            replacement: 'Hi',
+          },
+        ];
+
+        const result = applyTextFilters('Hello World!', filters);
+        assert.equal(result, 'Hi World!');
+      });
+
+      it('should handle end command with regexp flags', () => {
+        const filters: TextFilter[] = [
+          {
+            id: 1,
+            enabled: true,
+            target: 'output',
+            type: 'command',
+            command: 'end',
+            isRegex: true,
+            pattern: 'hello',
+            flags: 'i',
+          },
+        ];
+
+        const result = applyTextFilters('Hello World!', filters);
+        assert.equal(result, '');
       });
     });
 
@@ -254,13 +399,14 @@ describe('Text Filter Functions', () => {
             id: 2,
             enabled: true,
             target: 'output',
-            type: 'command',
-            pattern: 'substring(5)',
+            type: 'pattern',
+            pattern: 'World',
+            replacement: 'Universe',
           },
         ];
 
         const result = applyTextFilters('Hello World!', filters);
-        assert.equal(result, 'Hi Wo');
+        assert.equal(result, 'Hi Universe!');
       });
 
       it('should skip disabled filters in sequence', () => {
@@ -326,14 +472,6 @@ describe('Text Filter Functions', () => {
           {
             id: 2,
             enabled: true,
-            target: 'field',
-            fieldName: 'body',
-            type: 'command',
-            pattern: 'substring(0, 8)',
-          },
-          {
-            id: 3,
-            enabled: true,
             target: 'output',
             type: 'pattern',
             isRegex: true,
@@ -342,7 +480,7 @@ describe('Text Filter Functions', () => {
           },
           // Not applied because fieldName does not match
           {
-            id: 4,
+            id: 3,
             enabled: true,
             target: 'field',
             fieldName: 'name',
@@ -354,7 +492,7 @@ describe('Text Filter Functions', () => {
           },
           // Not applied because filter is disabled
           {
-            id: 5,
+            id: 4,
             enabled: false,
             target: 'output',
             type: 'pattern',
@@ -366,7 +504,7 @@ describe('Text Filter Functions', () => {
         ];
 
         const result = applyTextFilters('Hello filter world!', filters, { fieldName: 'body' });
-        assert.equal(result, 'Aello  w');
+        assert.equal(result, 'Aello  world!');
       });
 
       it('should apply output filter regardless of field', () => {

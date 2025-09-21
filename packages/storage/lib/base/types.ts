@@ -96,8 +96,8 @@ export type LogStorageType = BaseStorageType<LogStateType> & {
 export type BaseTextFilter = {
   id: number;
   enabled: boolean;
-  target: 'field' | 'output'; // フィールド個別 or 最終出力
-  fieldName?: string; // target が 'field' の場合に使用
+  target: 'field' | 'output'; // Per field or spoken text
+  fieldName?: string; // Only used when the target is 'field'
   description?: string;
 };
 export type PatternFilter = BaseTextFilter & {
@@ -107,13 +107,17 @@ export type PatternFilter = BaseTextFilter & {
   pattern: string;
   replacement: string;
 };
-export type CommandFilter = BaseTextFilter & {
+export type EndCommandFilter = BaseTextFilter & {
   type: 'command';
-  isRegex?: never;
-  flags?: never;
-  pattern: string;
+  command: 'end';
+  pattern?: string;
+  isRegex?: boolean;
+  flags?: string; // Only used when isRegex is true
+  args?: never;
   replacement?: never;
 };
+
+export type CommandFilter = EndCommandFilter;
 
 export type TextFilter = PatternFilter | CommandFilter;
 export type TextFilterStateType = {

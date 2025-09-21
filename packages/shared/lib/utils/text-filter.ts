@@ -1,33 +1,35 @@
 import type { logger as loggerType } from './logger';
-import type { TextFilter } from '@extension/storage/lib/base/types';
+import type { CommandFilter, TextFilter } from '@extension/storage/lib/base/types';
 
-const parseCommand = (command: string): { name: string; args: string[] } | null => {
-  const match = command.trim().match(/^(\w+)\(([^)]*)\)$/);
-  if (!match) return null;
+/** @returns Transformed text, or null if the filtering should be terminated */
+const executeCommand = (text: string, filter: CommandFilter, logger?: typeof loggerType): string | null => {
+  switch (filter.command) {
+    case 'end': {
+      // If pattern provided, check if pattern matches before ending
+      if (filter.pattern) {
+        const { pattern, isRegex, flags } = filter;
+        let matches = false;
 
-  const [, name, argsStr] = match;
-  const args = argsStr.trim() === '' ? [] : argsStr.split(',').map(arg => arg.trim());
+        if (isRegex) {
+          try {
+            const regex = new RegExp(pattern, flags || '');
+            matches = regex.test(text);
+          } catch (error) {
+            logger?.warn(`Invalid regex in end command: ${pattern}`, error);
+            return text; // Invalid regex, continue filtering
+          }
+        } else {
+          matches = text.includes(pattern);
+        }
 
-  return { name, args };
-};
-
-const executeCommand = (text: string, command: string, logger?: typeof loggerType): string => {
-  const parsed = parseCommand(command);
-  if (!parsed) {
-    logger?.warn(`Invalid command format: ${command}`);
-    return text;
-  }
-
-  const { name, args } = parsed;
-
-  switch (name) {
-    case 'substring': {
-      const start = parseInt(args[1] ?? '0', 10);
-      const end = args[0] ? parseInt(args[0], 10) : undefined;
-      return text.substring(start, end);
+        if (!matches) {
+          return text; // Pattern doesn't match, continue filtering
+        }
+      }
+      return null; // End filtering
     }
     default:
-      logger?.warn(`Unknown command: ${name}`);
+      logger?.warn(`Unknown command: ${filter.command}`);
       return text;
   }
 };
@@ -62,7 +64,12 @@ export const applyTextFilters = (
         break;
       }
       case 'command': {
-        result = executeCommand(result, filter.pattern, logger);
+        const commandResult = executeCommand(result, filter, logger);
+        if (commandResult === null) {
+          return '';
+        }
+
+        result = commandResult;
         break;
       }
     }
