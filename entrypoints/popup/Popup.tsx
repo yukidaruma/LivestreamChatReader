@@ -2,7 +2,7 @@ import { t, useStorage, useSubscribeIcon, useThemeStorage, withErrorBoundary, wi
 import { extensionEnabledStorage } from '@extension/storage';
 import { ErrorDisplay, IconButton, icons, LoadingSpinner, ToggleButton } from '@extension/ui';
 
-import './App.css';
+import './Popup.css';
 
 const Popup = () => {
   const { enabled } = useStorage(extensionEnabledStorage);
