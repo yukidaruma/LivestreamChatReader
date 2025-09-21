@@ -9,7 +9,7 @@ html {
 }
 
 .App {
-  @apply p-6;
+  @apply mx-auto max-w-5xl p-6;
 }
 
 h1 {
@@ -17,31 +17,4 @@ h1 {
 }
 h2 {
   @apply mb-2 text-lg font-semibold;
-}
-input,
-select,
-textarea,
-.form-control {
-  @apply max-w-72 flex-1 rounded border p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none;
-  color: var(--text-secondary);
-  background-color: var(--bg-secondary);
-  border-color: var(--border-primary);
-}
-input[type='range'] {
-  padding: 0;
-}
-button {
-  @apply flex-shrink-0 rounded px-4 py-2 font-medium focus:ring-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
-  color: var(--text-primary);
-  background-color: var(--bg-button);
-  border: 1px solid var(--border-button);
-}
-button:hover:not(:disabled) {
-  @apply transition-colors duration-150 ease-in-out;
-  background-color: var(--bg-button-secondary);
-}
-input:disabled,
-select:disabled,
-button:disabled {
-  @apply disabled:cursor-not-allowed disabled:opacity-50;
 }

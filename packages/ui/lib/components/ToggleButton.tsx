@@ -1,15 +1,19 @@
 import { cn } from '../utils';
 
-interface ToggleButtonProps {
+type ToggleButtonProps = {
   checked: boolean;
   onChange: () => void;
-  label?: string;
-  srOnlyLabel?: string;
   className?: string;
-}
+  srOnlyLabel?: string;
+};
 
-export const ToggleButton = ({ checked, onChange, label, srOnlyLabel, className }: ToggleButtonProps) => (
-  <label className={cn('flex cursor-pointer items-center gap-2', className)}>
+type LabeledToggleButtonProps = ToggleButtonProps & {
+  currentState?: string;
+  description?: string;
+};
+
+export const ToggleButton = ({ checked, onChange, className, srOnlyLabel }: ToggleButtonProps) => (
+  <label className={cn('cursor-pointer', className)}>
     {srOnlyLabel && <span className="sr-only">{srOnlyLabel}</span>}
     <input type="checkbox" checked={checked} onChange={onChange} className="sr-only" />
     <div
@@ -24,6 +28,18 @@ export const ToggleButton = ({ checked, onChange, label, srOnlyLabel, className 
         )}
       />
     </div>
-    {label && <span className="text-sm select-none">{label}</span>}
   </label>
 );
+
+export const LabeledToggleButton = (props: LabeledToggleButtonProps) => {
+  const { currentState, description, ...restProps } = props;
+  return (
+    <label className={cn('cursor-pointer')}>
+      <div className="flex items-center gap-2">
+        {description && <span className="text-secondary flex-1 text-sm select-none">{description}</span>}
+        <ToggleButton {...restProps} />
+      </div>
+      {currentState && <div className="mt-1 text-xs text-gray-500 select-none">{currentState}</div>}
+    </label>
+  );
+};

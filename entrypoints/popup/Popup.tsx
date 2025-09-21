@@ -1,6 +1,6 @@
 import { t, useStorage, useSubscribeIcon, useThemeStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { extensionEnabledStorage } from '@extension/storage';
-import { ErrorDisplay, IconButton, icons, LoadingSpinner, ToggleButton } from '@extension/ui';
+import { ErrorDisplay, IconButton, icons, LabeledToggleButton, LoadingSpinner } from '@extension/ui';
 
 import './Popup.css';
 
@@ -23,12 +23,12 @@ const Popup = () => {
         />
       </header>
 
-      <ToggleButton
+      <LabeledToggleButton
         className="my-2 py-2"
         checked={enabled}
         onChange={extensionEnabledStorage.toggle}
-        label={enabled ? t('enabled') : t('disabled')}
-        srOnlyLabel={t('toggleExtension')}
+        description={t('extensionState')}
+        srOnlyLabel={enabled ? t('enabled') : t('disabled')}
       />
     </div>
   );

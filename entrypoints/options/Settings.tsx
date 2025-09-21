@@ -5,7 +5,6 @@ import {
   t,
   useDebounce,
   useStorage,
-  useThemeStorage,
   useSubscribeIcon,
 } from '@extension/shared';
 import { DEFAULT_SPEECH_TEMPLATE, speakText } from '@extension/shared/lib/utils';
@@ -13,11 +12,12 @@ import {
   extensionEnabledStorage,
   languageStorage,
   speechTemplateStorage,
+  themeStorage,
   ttsRateStorage,
   ttsVoiceEngineStorage,
   ttsVolumeStorage,
 } from '@extension/storage';
-import { cn, IconButton, ToggleButton } from '@extension/ui';
+import { cn, IconButton, LabeledToggleButton } from '@extension/ui';
 import * as icons from '@extension/ui/lib/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -39,9 +39,9 @@ const validateSpeechTemplate = (template: string): string[] | null => {
 };
 
 const Settings = () => {
-  const { isLight, toggle: toggleThemeStorage } = useThemeStorage();
   const { enabled } = useStorage(extensionEnabledStorage);
   const { language } = useStorage(languageStorage);
+  const { isLight } = useStorage(themeStorage);
   const { rate: storedRate } = useStorage(ttsRateStorage);
   const { template: speechTemplate } = useStorage(speechTemplateStorage);
   const { volume: storedVolume } = useStorage(ttsVolumeStorage);
@@ -171,18 +171,20 @@ const Settings = () => {
       <div className="space-y-6">
         <div>
           <h2>{t('extensionState')}</h2>
-          <ToggleButton
+          <LabeledToggleButton
             checked={enabled}
             onChange={extensionEnabledStorage.toggle}
-            label={enabled ? t('enabled') : t('disabled')}
+            currentState={enabled ? t('enabled') : t('disabled')}
+            description={t('extensionStateDescription')}
           />
         </div>
         <div>
           <h2>{t('theme')}</h2>
-          <ToggleButton
+          <LabeledToggleButton
             checked={isLight}
-            onChange={toggleThemeStorage}
-            label={isLight ? t('lightMode') : t('darkMode')}
+            onChange={themeStorage.toggle}
+            currentState={isLight ? t('lightMode') : t('darkMode')}
+            description={t('themeDescription')}
           />
         </div>
         <div className="hidden">
@@ -293,7 +295,7 @@ const Settings = () => {
                   {t('viewOnGitHub')}
                 </a>
               </p>
-              <div className="form-control max-h-60 max-w-240! overflow-y-scroll font-mono text-sm whitespace-pre-wrap">
+              <div className="form-control max-h-60 w-full max-w-none! overflow-y-scroll font-mono text-sm whitespace-pre-wrap">
                 {changelog}
               </div>
             </div>

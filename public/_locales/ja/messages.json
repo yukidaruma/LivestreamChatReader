@@ -63,7 +63,7 @@
     "message": "音声を読み込み中..."
   },
   "testVoice": {
-    "message": "音声テスト"
+    "message": "音声をテストする"
   },
   "cancel": {
     "message": "キャンセル"
@@ -84,7 +84,7 @@
     "message": "読み上げテンプレート"
   },
   "speechTemplateDescription": {
-    "message": "メッセージの読み上げ方をカスタマイズできます。変数 %(name) はユーザー名に、 %(body) は本文に置き換えられます。"
+    "message": "メッセージの読み上げ方をカスタマイズできます。変数 %(name) はユーザー名に、 %(body) はコメント本文に置き換えられます。"
   },
   "invalidFieldNames": {
     "message": "読み上げテンプレートエラー: 変数 $1 は存在しません。"

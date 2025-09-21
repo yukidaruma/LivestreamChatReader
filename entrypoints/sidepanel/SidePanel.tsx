@@ -1,7 +1,7 @@
 import './SidePanel.css';
 import { t, logger, useStorage, useThemeStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { logConsoleStorage, logStorage } from '@extension/storage';
-import { cn, ErrorDisplay, LoadingSpinner, ToggleButton } from '@extension/ui';
+import { cn, ErrorDisplay, LabeledToggleButton, LoadingSpinner } from '@extension/ui';
 import { useEffect, useState } from 'react';
 import type { LogEntry } from '@extension/storage/lib/base/types';
 
@@ -149,10 +149,11 @@ const SidePanel = () => {
         </div>
 
         <div className="mt-4">
-          <ToggleButton
+          <LabeledToggleButton
             checked={consoleLogging}
             onChange={logConsoleStorage.toggle}
-            label={consoleLogging ? 'Console Logging: On' : 'Console Logging: Off'}
+            description="Console Logging"
+            srOnlyLabel={consoleLogging ? t('enabled') : t('disabled')}
           />
         </div>
         <div className="mt-2">

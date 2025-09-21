@@ -33,9 +33,7 @@ export const IconButton = (props: IconButtonProps) => {
   } = props;
 
   const button = (
-    <button
-      {...restProps}
-      className={cn('inline-flex items-center justify-center rounded p-2! hover:bg-gray-100', className)}>
+    <button {...restProps} className={cn('inline-flex items-center justify-center rounded p-2!', className)}>
       <Icon color={color} size={iconSize} />
       {children}
     </button>
