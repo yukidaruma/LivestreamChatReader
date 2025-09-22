@@ -14,7 +14,9 @@ const Options = () => {
   const isInline = new URLSearchParams(window.location.search).has('inline');
 
   useMount(() => {
-    document.body.classList.add('inline');
+    if (isInline) {
+      document.body.classList.add('inline');
+    }
   });
 
   useThemeStorage(); // Ensure data-theme is set for <html>
