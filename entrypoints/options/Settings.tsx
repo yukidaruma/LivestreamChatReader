@@ -271,7 +271,9 @@ const Settings = () => {
         <div>
           <div className="mb-2 flex items-center space-x-2">
             <h2 className="mb-0!">{t('filterSettings')}</h2>
-            <span className="text-secondary text-sm">{t('filtersInUse', enabledFilterCount.toString())}</span>
+            <span className="text-secondary text-sm">
+              {enabledFilterCount === 0 ? t('noFilters') : t('filtersInUse', enabledFilterCount.toString())}
+            </span>
           </div>
           <a href="#filter">{t('openPage', t('filterSettings'))}</a>
         </div>

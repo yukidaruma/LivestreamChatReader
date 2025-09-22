@@ -1,14 +1,19 @@
 import { t, useStorage, useSubscribeIcon, useThemeStorage, withErrorBoundary, withSuspense } from '@extension/shared';
-import { extensionEnabledStorage } from '@extension/storage';
+import { extensionEnabledStorage, textFilterStorage } from '@extension/storage';
 import { ErrorDisplay, IconButton, icons, LabeledToggleButton, LoadingSpinner } from '@extension/ui';
 
 import './Popup.css';
 
 const Popup = () => {
   const { enabled } = useStorage(extensionEnabledStorage);
+  const { filters } = useStorage(textFilterStorage);
 
   useThemeStorage(); // Ensure data-theme is set for <html>
   useSubscribeIcon();
+
+  // Includes disabled filters for counting,
+  // because it means the user has created at least one filter.
+  const hasNoFilters = filters.length === 0;
 
   return (
     <div className="App h-screen w-full">
@@ -22,8 +27,7 @@ const Popup = () => {
           aria-label={t('settings')}
         />
       </header>
-
-      <div className="text-sm">
+      <div className="space-y-3 text-sm">
         <LabeledToggleButton
           className="my-2 py-2"
           checked={enabled}
@@ -31,6 +35,14 @@ const Popup = () => {
           description={t('extensionState')}
           srOnlyLabel={enabled ? t('enabled') : t('disabled')}
         />
+
+        {hasNoFilters && (
+          <div className="text-secondary text-xs">
+            <a href="/options.html#filter" target="_blank">
+              {t('hintFilter')}
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -178,5 +178,8 @@
   },
   "empty": {
     "message": "(empty)"
+  },
+  "hintFilter": {
+    "message": "Hint: You can use filters. Try creating one!"
   }
 }

@@ -3,7 +3,7 @@
 html,
 body {
   width: 300px;
-  height: 110px;
+  background-color: var(--bg-primary);
 }
 
 #app-container {
@@ -11,8 +11,7 @@ body {
 }
 
 .App {
-  flex: 1;
-  padding: 12px;
-  background-color: var(--bg-primary);
+  @apply h-full flex-1;
+  padding: 10px;
   color: var(--text-primary);
 }
