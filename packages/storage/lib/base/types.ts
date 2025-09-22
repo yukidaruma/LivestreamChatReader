@@ -125,6 +125,7 @@ export type TextFilterStorageType = BaseStorageType<TextFilterStateType> & {
   addFilter: (filterData: Omit<TextFilter, 'id'>) => Promise<TextFilter>;
   removeFilter: (id: number) => Promise<void>;
   updateFilter: (id: number, updates: Partial<Omit<TextFilter, 'id'>>) => Promise<void>;
+  reorderFilters: (sourceId: number, targetId: number) => Promise<void>;
 };
 
 // speech-template-storage.ts

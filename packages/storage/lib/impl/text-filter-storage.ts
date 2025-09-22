@@ -42,4 +42,20 @@ export const textFilterStorage: TextFilterStorageType = {
       nextId,
     });
   },
+  reorderFilters: async (sourceId, targetId) => {
+    const { filters, nextId } = await storage.get();
+    const sourceIndex = filters.findIndex(f => f.id === sourceId);
+    const targetIndex = filters.findIndex(f => f.id === targetId);
+
+    if (sourceIndex === -1 || targetIndex === -1) return;
+
+    const reorderedFilters = [...filters];
+    const [movedItem] = reorderedFilters.splice(sourceIndex, 1);
+    reorderedFilters.splice(targetIndex, 0, movedItem);
+
+    await storage.set({
+      filters: reorderedFilters,
+      nextId,
+    });
+  },
 };

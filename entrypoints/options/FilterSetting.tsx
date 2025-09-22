@@ -1,7 +1,11 @@
-import { t, unsafeT, useStorage } from '@extension/shared';
+import { DndContext, closestCenter } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { t, unsafeT } from '@extension/shared';
 import { textFilterStorage } from '@extension/storage';
 import { Dialog, IconButton, LabeledToggleButton, icons, useConfirm } from '@extension/ui';
 import { useState, useEffect } from 'react';
+import type { DragEndEvent } from '@dnd-kit/core';
 import type { FilterCommandName, TextFilter } from '@extension/storage';
 
 const validateRegex = (pattern: string): string | null => {
@@ -14,6 +18,75 @@ const validateRegex = (pattern: string): string | null => {
 };
 
 type TextFilterWithoutId = Omit<TextFilter, 'id'>;
+
+type SortableFilterItemProps = {
+  filter: TextFilter;
+  onEdit: (id: number) => void;
+  onDelete: (id: number) => void;
+};
+
+const SortableFilterItem = ({ filter, onEdit, onDelete }: SortableFilterItemProps) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: filter.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="flex items-center space-x-2">
+      <div
+        {...attributes}
+        {...listeners}
+        className="cursor-grab rounded p-1 hover:bg-[var(--bg-secondary)] active:cursor-grabbing">
+        <icons.Menu size="16" color="var(--text-secondary)" />
+      </div>
+      <div
+        onClick={() => onEdit(filter.id)}
+        className="flex min-h-12 flex-1 cursor-pointer items-center border border-transparent p-2 font-mono hover:bg-[var(--bg-secondary)]"
+        role="button"
+        tabIndex={0}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onEdit(filter.id);
+          }
+        }}>
+        <div>
+          {filter.target === 'field' && <span className="text-secondary">[{unsafeT(filter.fieldName!)}]</span>}
+          <div className="flex items-center space-x-2">
+            {filter.type === 'pattern' && (
+              <>
+                <span>{filter.pattern}</span>
+                <span>→</span>
+                {filter.replacement ? (
+                  <span>{filter.replacement}</span>
+                ) : (
+                  <span className="text-secondary">{t('empty')}</span>
+                )}
+              </>
+            )}
+            {filter.type === 'command' && (
+              <>
+                <code>{filter.command}</code>
+                <span>{filter.pattern && filter.pattern}</span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+      <IconButton
+        icon={icons.Close}
+        onClick={() => onDelete(filter.id)}
+        className="hover:bg-red-500/20!"
+        color="var(--color-red-600)"
+        outline
+        title={t('delete')}
+      />
+    </div>
+  );
+};
 
 interface FilterRuleDialogProps {
   isOpen: boolean;
@@ -33,10 +106,17 @@ const DEFAULT_FILTER_VALUES = {
 };
 
 const FilterSetting = () => {
-  const { filters } = useStorage(textFilterStorage);
+  // Manage filters as a state;
+  // As the storage operation is async, reordering animation will be janky if we read from storage directly.
+  const [filters, setFilters] = useState<TextFilter[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingFilter, setEditingFilter] = useState<TextFilter | null>(null);
   const confirm = useConfirm();
+
+  useEffect(() => {
+    const { filters: storedFilters } = textFilterStorage.getSnapshot() ?? { filters: [] };
+    setFilters(storedFilters);
+  }, []);
 
   const addRule = () => {
     setEditingFilter(null);
@@ -53,9 +133,11 @@ const FilterSetting = () => {
     if (editingFilter) {
       // Edit existing rule
       await textFilterStorage.updateFilter(editingFilter.id, filterData);
+      setFilters(prev => prev.map(f => (f.id === editingFilter.id ? ({ ...f, ...filterData } as TextFilter) : f)));
     } else {
       // Add new rule
-      await textFilterStorage.addFilter(filterData);
+      const newFilter = await textFilterStorage.addFilter(filterData);
+      setFilters(prev => [...prev, newFilter]);
     }
 
     setEditingFilter(null);
@@ -86,10 +168,29 @@ const FilterSetting = () => {
 
     if (!confirmed) return;
 
-    try {
-      await textFilterStorage.removeFilter(id);
-    } catch (error) {
-      console.error('Failed to delete filter:', error);
+    await textFilterStorage.removeFilter(id);
+    setFilters(prev => prev.filter(f => f.id !== id));
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const {
+      active: { id: activeId },
+      over,
+    } = event;
+
+    if (over && activeId !== over.id) {
+      const activeIndex = filters.findIndex(f => f.id === activeId);
+      const overIndex = filters.findIndex(f => f.id === over.id);
+
+      if (activeIndex !== -1 && overIndex !== -1) {
+        // Update local state immediately for smooth UI
+        const newFilters = [...filters];
+        const [movedItem] = newFilters.splice(activeIndex, 1);
+        newFilters.splice(overIndex, 0, movedItem);
+        setFilters(newFilters);
+
+        await textFilterStorage.reorderFilters(activeId as number, over.id as number);
+      }
     }
   };
 
@@ -113,52 +214,15 @@ const FilterSetting = () => {
         ) : (
           <>
             <p className="text-secondary mt-8 text-sm">{t('filterOrderNote')}</p>
-            {filters.map(rule => (
-              <div key={rule.id} className="flex items-center space-x-2">
-                <div
-                  onClick={() => startEditing(rule.id)}
-                  className="flex min-h-12 flex-1 cursor-pointer items-center border border-transparent p-2 font-mono hover:bg-[var(--bg-secondary)]"
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      startEditing(rule.id);
-                    }
-                  }}>
-                  <div>
-                    {rule.target === 'field' && <span className="text-secondary">[{unsafeT(rule.fieldName!)}]</span>}
-                    <div className="flex items-center space-x-2">
-                      {rule.type === 'pattern' && (
-                        <>
-                          <span>{rule.pattern}</span>
-                          <span>→</span>
-                          {rule.replacement ? (
-                            <span>{rule.replacement}</span>
-                          ) : (
-                            <span className="text-secondary">{t('empty')}</span>
-                          )}
-                        </>
-                      )}
-                      {rule.type === 'command' && (
-                        <>
-                          <code>{rule.command}</code>
-                          <span>{rule.pattern && rule.pattern}</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
+            <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={filters.map(f => f.id)} strategy={verticalListSortingStrategy}>
+                <div className="space-y-3">
+                  {filters.map(rule => (
+                    <SortableFilterItem key={rule.id} filter={rule} onEdit={startEditing} onDelete={deleteRule} />
+                  ))}
                 </div>
-                <IconButton
-                  icon={icons.Close}
-                  onClick={() => deleteRule(rule.id)}
-                  className="hover:bg-red-500/20!"
-                  color="var(--color-red-600)"
-                  outline
-                  title={t('delete')}
-                />
-              </div>
-            ))}
+              </SortableContext>
+            </DndContext>
           </>
         )}
       </div>
