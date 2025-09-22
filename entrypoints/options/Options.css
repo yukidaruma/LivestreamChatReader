@@ -10,7 +10,7 @@ html {
 }
 
 body:not(.inline) .App {
-  @apply mx-auto max-w-5xl px-6;
+  @apply mx-auto max-w-5xl;
 }
 
 h1 {

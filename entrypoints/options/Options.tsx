@@ -86,7 +86,7 @@ const Options = () => {
       )}
 
       {/* Tab Content */}
-      <div className="flex-1 p-6">
+      <div className="flex-1 py-4">
         {currentTab === 'settings' && <Settings />}
         {currentTab === 'filter' && <FilterSetting />}
         {currentTab === 'chat-test' && <ChatTest />}
