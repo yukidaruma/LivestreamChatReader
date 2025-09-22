@@ -1,7 +1,5 @@
 import { validateSpeechTemplate } from './util';
-import rawChangelog from '../../CHANGELOG.md?raw';
 import {
-  PROJECT_URL_OBJECT,
   supportedLanguages,
   t,
   useDebounce,
@@ -20,7 +18,7 @@ import {
   ttsVoiceEngineStorage,
   ttsVolumeStorage,
 } from '@extension/storage';
-import { cn, IconButton, LabeledToggleButton, icons } from '@extension/ui';
+import { cn, LabeledToggleButton } from '@extension/ui';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 const Settings = () => {
@@ -42,14 +40,8 @@ const Settings = () => {
   const currentVolumeRef = useRef(storedVolume);
   const cancelTestSpeechRef = useRef<(() => void) | null>(null);
 
-  const changelog = rawChangelog.replace(/^# Changelog/, '').trim();
-
   const invalidFieldNames = useMemo(() => validateSpeechTemplate(localSpeechTemplate), [localSpeechTemplate]);
   const enabledFilterCount = useMemo(() => filters.filter(filter => filter.enabled).length, [filters]);
-
-  // Check if we're in inline mode (embedded in iframe)
-  const isInline = new URLSearchParams(window.location.search).has('inline');
-
   useSubscribeIcon();
 
   const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -277,42 +269,6 @@ const Settings = () => {
           </div>
           <p className="text-secondary text-sm">{t('filterSettingsDescription')}</p>
         </div>
-
-        {!isInline && (
-          <div className="divide-y divide-gray-600 border-t border-gray-600 [&>*]:py-2">
-            <div>
-              <h1>{t('changelog')}</h1>
-              <p className="mb-2">
-                <a href={`${PROJECT_URL_OBJECT.url}/blob/main/CHANGELOG.md`} target="_blank" rel="noopener noreferrer">
-                  {t('viewOnGitHub')}
-                </a>
-              </p>
-              <div className="form-control max-h-60 w-full max-w-none! overflow-y-scroll font-mono text-sm whitespace-pre-wrap">
-                {changelog}
-              </div>
-            </div>
-
-            <div>
-              <h1>{t('contacts')}</h1>
-              <div className="space-x-2">
-                <IconButton
-                  icon={icons.Github}
-                  href={PROJECT_URL_OBJECT.url}
-                  target="_blank"
-                  title={t('openPage', t('githubRepository'))}
-                  aria-label={t('githubRepository')}
-                />
-                <IconButton
-                  icon={icons.X}
-                  href={PROJECT_URL_OBJECT.x}
-                  target="_blank"
-                  title={t('openPage', t('xProfile'))}
-                  aria-label={t('xProfile')}
-                />
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </>
   );

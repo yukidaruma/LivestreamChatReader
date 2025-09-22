@@ -226,5 +226,11 @@
   },
   "extensionDisabledTestMessage": {
     "message": "拡張機能が無効です。チャット音声読み上げ機能をテストするには拡張機能を有効にしてください。"
+  },
+  "about": {
+    "message": "$1 について"
+  },
+  "version": {
+    "message": "バージョン"
   }
 }

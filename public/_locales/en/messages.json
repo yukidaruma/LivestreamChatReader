@@ -226,5 +226,11 @@
   },
   "extensionDisabledTestMessage": {
     "message": "Extension is disabled. Enable the extension to test the chat text-to-speech functionality."
+  },
+  "about": {
+    "message": "About $1"
+  },
+  "version": {
+    "message": "Version"
   }
 }

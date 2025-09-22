@@ -1,19 +1,27 @@
+import About from './About';
 import ChatTest from './ChatTest';
 import FilterSetting from './FilterSetting';
 import Settings from './Settings';
-import { useThemeStorage, withErrorBoundary, withSuspense, t } from '@extension/shared';
+import { useThemeStorage, withErrorBoundary, withSuspense, t, useMount } from '@extension/shared';
 import { ErrorDisplay, LoadingSpinner } from '@extension/ui';
 import { useEffect, useState } from 'react';
 import './Options.css';
 
-type TabType = 'settings' | 'filter' | 'chat-test';
+type TabType = 'settings' | 'filter' | 'chat-test' | 'about';
 
 const Options = () => {
+  // Check if we're in inline mode (embedded in iframe)
+  const isInline = new URLSearchParams(window.location.search).has('inline');
+
+  useMount(() => {
+    document.body.classList.add('inline');
+  });
+
   useThemeStorage(); // Ensure data-theme is set for <html>
 
   const [currentTab, setCurrentTab] = useState<TabType>(() => {
     const hash = window.location.hash.slice(1);
-    if (hash === 'filter' || hash === 'chat-test') {
+    if (hash === 'filter' || hash === 'chat-test' || hash === 'about') {
       return hash as TabType;
     }
     return 'settings';
@@ -23,7 +31,7 @@ const Options = () => {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1);
-      if (hash === 'filter' || hash === 'chat-test') {
+      if (hash === 'filter' || hash === 'chat-test' || hash === 'about') {
         setCurrentTab(hash as TabType);
       } else {
         setCurrentTab('settings');
@@ -43,34 +51,40 @@ const Options = () => {
     { id: 'settings' as const, label: t('settings') },
     { id: 'filter' as const, label: t('filterSettings') },
     { id: 'chat-test' as const, label: t('testPage') },
+    { id: 'about' as const, label: t('about', t('extensionNameShort')) },
   ];
 
   return (
     <div className="flex min-h-screen flex-col">
-      <nav className="border-b-1 border-[var(--border-primary)] font-medium">
-        <div className="flex">
-          {tabs.map(tab => (
-            <a
-              key={tab.id}
-              href={tab.id === 'settings' ? '#' : `#${tab.id}`}
-              onClick={e => {
-                e.preventDefault();
-                handleTabChange(tab.id);
-              }}
-              className={`default text-primary border-b-2 px-4 py-3 text-sm decoration-0 hover:bg-[var(--bg-secondary)] ${
-                currentTab === tab.id ? 'border-blue-500' : 'border-transparent text-inherit hover:border-gray-300'
-              }`}>
-              {tab.label}
-            </a>
-          ))}
-        </div>
-      </nav>
+      {isInline || (
+        <nav className="border-b-1 border-[var(--border-primary)] font-medium">
+          <div className="flex">
+            {tabs.map(tab => (
+              <a
+                key={tab.id}
+                href={tab.id === 'settings' ? '#' : `#${tab.id}`}
+                onClick={e => {
+                  e.preventDefault();
+                  handleTabChange(tab.id);
+                }}
+                className={`default text-primary border-b-2 px-4 py-3 text-sm decoration-0 hover:bg-[var(--bg-secondary)]/80! ${
+                  currentTab === tab.id
+                    ? 'border-blue-500 bg-[var(--bg-secondary)]!'
+                    : 'border-transparent text-inherit hover:border-gray-300'
+                }`}>
+                {tab.label}
+              </a>
+            ))}
+          </div>
+        </nav>
+      )}
 
       {/* Tab Content */}
       <div className="flex-1 p-6">
         {currentTab === 'settings' && <Settings />}
         {currentTab === 'filter' && <FilterSetting />}
         {currentTab === 'chat-test' && <ChatTest />}
+        {currentTab === 'about' && <About />}
       </div>
     </div>
   );

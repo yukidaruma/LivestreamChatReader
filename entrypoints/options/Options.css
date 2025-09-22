@@ -9,7 +9,7 @@ html {
   padding-right: 0 !important; /* https://github.com/tailwindlabs/headlessui/issues/762 */
 }
 
-.App {
+body:not(.inline) .App {
   @apply mx-auto max-w-5xl px-6;
 }
 
