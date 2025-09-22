@@ -114,7 +114,7 @@ const SortableFilterItem = ({ filter, onEdit, onDelete }: SortableFilterItemProp
         <div>
           {filter.target === 'field' && (
             <span className="text-secondary">
-              [{t('filterTarget')} - {unsafeT(filter.fieldName!)}]
+              [{t('filterTarget')} {unsafeT(filter.fieldName!)}]
             </span>
           )}
           <div className="flex items-center space-x-2">

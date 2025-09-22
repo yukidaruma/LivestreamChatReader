@@ -26,7 +26,7 @@ const About = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-500 hover:text-blue-600">
-            {t('viewOnGitHub')}
+            {t('readChangelogOnGitHub')}
           </a>
         </p>
         <div className="form-control bg-secondary border-primary max-h-60 w-full max-w-none! overflow-y-scroll rounded border p-3 font-mono text-sm whitespace-pre-wrap">

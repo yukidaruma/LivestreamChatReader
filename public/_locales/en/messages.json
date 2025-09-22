@@ -14,8 +14,8 @@
   "changelog": {
     "message": "Update History"
   },
-  "viewOnGitHub": {
-    "message": "View on GitHub"
+  "readChangelogOnGitHub": {
+    "message": "Read Changelog on GitHub"
   },
   "contacts": {
     "message": "Contacts"
@@ -45,7 +45,7 @@
     "message": "Settings"
   },
   "filterSettings": {
-    "message": "Filter Settings"
+    "message": "Filters"
   },
   "testPage": {
     "message": "Test Page"

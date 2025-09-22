@@ -2,7 +2,8 @@ import About from './About';
 import ChatTest from './ChatTest';
 import FilterSetting from './FilterSetting';
 import Settings from './Settings';
-import { useThemeStorage, withErrorBoundary, withSuspense, t, useMount } from '@extension/shared';
+import { useThemeStorage, withErrorBoundary, withSuspense, t, useMount, useStorage } from '@extension/shared';
+import { textFilterStorage } from '@extension/storage';
 import { ErrorDisplay, LoadingSpinner } from '@extension/ui';
 import { useEffect, useState } from 'react';
 import './Options.css';
@@ -12,6 +13,9 @@ type TabType = 'settings' | 'filter' | 'chat-test' | 'about';
 const Options = () => {
   // Check if we're in inline mode (embedded in iframe)
   const isInline = new URLSearchParams(window.location.search).has('inline');
+
+  const { filters } = useStorage(textFilterStorage);
+  const enabledFilterCount = useMemo(() => filters.filter(filter => filter.enabled).length, [filters]);
 
   useMount(() => {
     if (isInline) {
@@ -51,7 +55,7 @@ const Options = () => {
 
   const tabs = [
     { id: 'settings' as const, label: t('settings') },
-    { id: 'filter' as const, label: t('filterSettings') },
+    { id: 'filter' as const, label: `${t('filterSettings')} (${enabledFilterCount})` },
     { id: 'chat-test' as const, label: t('testPage') },
     { id: 'about' as const, label: t('about', t('extensionNameShort')) },
   ];

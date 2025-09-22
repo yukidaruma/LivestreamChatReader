@@ -12,7 +12,6 @@ import {
   extensionEnabledStorage,
   languageStorage,
   speechTemplateStorage,
-  textFilterStorage,
   themeStorage,
   ttsRateStorage,
   ttsVoiceEngineStorage,
@@ -29,7 +28,6 @@ const Settings = () => {
   const { template: speechTemplate } = useStorage(speechTemplateStorage);
   const { volume: storedVolume } = useStorage(ttsVolumeStorage);
   const { uri: voiceURI } = useStorage(ttsVoiceEngineStorage);
-  const { filters } = useStorage(textFilterStorage);
 
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [localRate, setLocalRate] = useState(storedRate);
@@ -41,7 +39,6 @@ const Settings = () => {
   const cancelTestSpeechRef = useRef<(() => void) | null>(null);
 
   const invalidFieldNames = useMemo(() => validateSpeechTemplate(localSpeechTemplate), [localSpeechTemplate]);
-  const enabledFilterCount = useMemo(() => filters.filter(filter => filter.enabled).length, [filters]);
   useSubscribeIcon();
 
   const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -52,7 +49,7 @@ const Settings = () => {
   const debouncedRateUpdate = useDebounce(ttsRateStorage.setRate, 300);
   const debouncedSpeechTemplateUpdate = useDebounce((newTemplate: string) => {
     // Set the template to `null` if the input is blank
-    speechTemplateStorage.setTemplate(newTemplate?.trim() || null);
+    speechTemplateStorage.setTemplate(newTemplate || null);
   }, 300);
 
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -200,7 +197,7 @@ const Settings = () => {
                 </option>
               )}
             </select>
-            <button onClick={isTestingVoice ? cancelVoiceTest : startVoiceTest} disabled={!enabled}>
+            <button className="text-sm" onClick={isTestingVoice ? cancelVoiceTest : startVoiceTest} disabled={!enabled}>
               {isTestingVoice ? t('cancel') : t('testVoice')}
             </button>
           </div>
@@ -258,16 +255,6 @@ const Settings = () => {
               </p>
             </div>
           </div>
-        </div>
-
-        <div>
-          <div className="mb-2 flex items-center space-x-2">
-            <h2 className="mb-0!">{t('filterSettings')}</h2>
-            <span className="text-secondary text-sm">
-              {enabledFilterCount === 0 ? t('noFilters') : t('filtersInUse', enabledFilterCount.toString())}
-            </span>
-          </div>
-          <p className="text-secondary text-sm">{t('filterSettingsDescription')}</p>
         </div>
       </div>
     </>

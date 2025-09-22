@@ -14,8 +14,8 @@
   "changelog": {
     "message": "更新履歴"
   },
-  "viewOnGitHub": {
-    "message": "GitHubで表示する"
+  "readChangelogOnGitHub": {
+    "message": "GitHubで更新履歴を読む"
   },
   "contacts": {
     "message": "連絡先"
@@ -45,13 +45,13 @@
     "message": "設定"
   },
   "filterSettings": {
-    "message": "フィルタ設定"
+    "message": "フィルタ"
   },
   "testPage": {
-    "message": "テスト用画面"
+    "message": "テスト画面"
   },
   "testPageTitle": {
-    "message": "音声読み上げ テスト用画面"
+    "message": "音声読み上げ テスト画面"
   },
   "extensionState": {
     "message": "拡張機能のステータス"
@@ -183,7 +183,7 @@
     "message": "正規表現を使用する"
   },
   "invertFilterPattern": {
-    "message": "検索条件を反転する (指定した内容を含まないものを対象とする)"
+    "message": "検索条件を反転する (検索対象を含まないものを対象とする)"
   },
   "filterPattern": {
     "message": "検索対象"
