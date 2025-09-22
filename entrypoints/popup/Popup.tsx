@@ -11,6 +11,8 @@ const Popup = () => {
   useThemeStorage(); // Ensure data-theme is set for <html>
   useSubscribeIcon();
 
+  const version = browser.runtime.getManifest().version;
+
   // Includes disabled filters for counting,
   // because it means the user has created at least one filter.
   const hasNoFilters = filters.length === 0;
@@ -18,7 +20,10 @@ const Popup = () => {
   return (
     <div className="App h-screen w-full">
       <header className="App-header flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{t('extensionNameShort')}</h1>
+        <div>
+          <h1 className="text-xl font-semibold">{t('extensionNameShort')}</h1>
+          <div className="text-secondary text-xs">v{version}</div>
+        </div>
         <IconButton
           icon={icons.Configure}
           href="/options.html"
