@@ -2,17 +2,17 @@ import { ConfirmDialog } from './ConfirmDialog';
 import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 
-interface ConfirmOptions {
+type ConfirmOptions = {
   title: string;
   message: string;
   confirmText?: string;
   cancelText?: string;
   confirmButtonClassName?: string;
-}
+};
 
-interface ConfirmContextValue {
+type ConfirmContextValue = {
   confirm: (options: ConfirmOptions) => Promise<boolean>;
-}
+};
 
 const ConfirmContext = createContext<ConfirmContextValue | null>(null);
 

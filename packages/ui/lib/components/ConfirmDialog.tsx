@@ -1,6 +1,6 @@
 import { Dialog } from './Dialog';
 
-interface ConfirmDialogProps {
+type ConfirmDialogProps = {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
@@ -9,7 +9,7 @@ interface ConfirmDialogProps {
   confirmText?: string;
   cancelText?: string;
   confirmButtonClassName?: string;
-}
+};
 
 export const ConfirmDialog = ({
   isOpen,

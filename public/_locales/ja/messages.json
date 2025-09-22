@@ -131,6 +131,30 @@
   "addRule": {
     "message": "ルールを追加する"
   },
+  "usePreset": {
+    "message": "プリセットを使用する"
+  },
+  "presetDialogTitle": {
+    "message": "プリセット選択"
+  },
+  "selectPreset": {
+    "message": "使用するプリセットを選択してください"
+  },
+  "presetUrlBlock": {
+    "message": "URLブロック"
+  },
+  "presetUrlBlockDescription": {
+    "message": "URLを含むメッセージをミュートします。"
+  },
+  "presetUrlToLink": {
+    "message": "URL → リンク"
+  },
+  "presetUrlToLinkDescription": {
+    "message": "URLを「リンク」という言葉に置き換えて読み上げます。"
+  },
+  "linkReplacement": {
+    "message": "リンク"
+  },
   "noFilters": {
     "message": "フィルタルールはまだありません。"
   },

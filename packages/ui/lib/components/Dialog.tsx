@@ -2,13 +2,13 @@ import { cn } from '../utils';
 import { Dialog as HeadlessDialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import type { ReactNode } from 'react';
 
-interface DialogProps {
+type DialogProps = {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
   children: ReactNode;
   className?: string;
-}
+};
 
 export const Dialog = ({ isOpen, onClose, title, children, className }: DialogProps) => (
   <HeadlessDialog open={isOpen} onClose={onClose} className="relative z-50">

@@ -3,7 +3,7 @@ import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-
 import { CSS } from '@dnd-kit/utilities';
 import { t, unsafeT } from '@extension/shared';
 import { textFilterStorage } from '@extension/storage';
-import { Dialog, IconButton, LabeledToggleButton, icons, useConfirm } from '@extension/ui';
+import { Dialog, IconButton, LabeledToggleButton, handleKeyboardClick, icons, useConfirm } from '@extension/ui';
 import { useState, useEffect } from 'react';
 import type { DragEndEvent } from '@dnd-kit/core';
 import type { FilterCommandName, TextFilter } from '@extension/storage';
@@ -18,6 +18,50 @@ const validateRegex = (pattern: string): string | null => {
 };
 
 type TextFilterWithoutId = Omit<TextFilter, 'id'>;
+
+type FilterPreset = {
+  name: string;
+  description: string;
+  filter: TextFilterWithoutId;
+};
+
+const DEFAULT_FILTER_VALUES = {
+  type: 'pattern' as const,
+  target: 'output' as const,
+  fieldName: 'name',
+  pattern: '',
+  replacement: '',
+  isRegex: false,
+  command: 'mute' as const,
+};
+
+const FILTER_PRESETS: FilterPreset[] = [
+  {
+    name: t('presetUrlBlock'),
+    description: t('presetUrlBlockDescription'),
+    filter: {
+      enabled: true,
+      type: 'command',
+      command: 'mute',
+      target: 'output',
+      pattern: 'https?://[^\\s]+',
+      replacement: '',
+      isRegex: true,
+    },
+  },
+  {
+    name: t('presetUrlToLink'),
+    description: t('presetUrlToLinkDescription'),
+    filter: {
+      enabled: true,
+      type: 'pattern',
+      target: 'output',
+      pattern: 'https?://[^\\s]+',
+      replacement: t('linkReplacement'),
+      isRegex: true,
+    },
+  },
+];
 
 type SortableFilterItemProps = {
   filter: TextFilter;
@@ -47,12 +91,7 @@ const SortableFilterItem = ({ filter, onEdit, onDelete }: SortableFilterItemProp
         className="flex min-h-12 flex-1 cursor-pointer items-center border border-transparent p-2 font-mono hover:bg-[var(--bg-secondary)]"
         role="button"
         tabIndex={0}
-        onKeyDown={e => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            onEdit(filter.id);
-          }
-        }}>
+        onKeyDown={handleKeyboardClick}>
         <div>
           {filter.target === 'field' && <span className="text-secondary">[{unsafeT(filter.fieldName!)}]</span>}
           <div className="flex items-center space-x-2">
@@ -88,21 +127,11 @@ const SortableFilterItem = ({ filter, onEdit, onDelete }: SortableFilterItemProp
   );
 };
 
-interface FilterRuleDialogProps {
+type FilterRuleDialogProps = {
   isOpen: boolean;
   onClose: () => void;
   onSave: (filter: TextFilterWithoutId) => void;
   initialFilter?: TextFilter | null;
-}
-
-const DEFAULT_FILTER_VALUES = {
-  type: 'pattern' as const,
-  target: 'output' as const,
-  fieldName: 'name',
-  pattern: '',
-  replacement: '',
-  isRegex: false,
-  command: 'mute' as const,
 };
 
 const FilterSetting = () => {
@@ -110,6 +139,7 @@ const FilterSetting = () => {
   // As the storage operation is async, reordering animation will be janky if we read from storage directly.
   const [filters, setFilters] = useState<TextFilter[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isPresetDialogOpen, setIsPresetDialogOpen] = useState(false);
   const [editingFilter, setEditingFilter] = useState<TextFilter | null>(null);
   const confirm = useConfirm();
 
@@ -121,6 +151,16 @@ const FilterSetting = () => {
   const addRule = () => {
     setEditingFilter(null);
     setIsDialogOpen(true);
+  };
+
+  const openPresetDialog = () => {
+    setIsPresetDialogOpen(true);
+  };
+
+  const applyPreset = async (preset: FilterPreset) => {
+    const newFilter = await textFilterStorage.addFilter(preset.filter);
+    setFilters(prev => [...prev, newFilter]);
+    setIsPresetDialogOpen(false);
   };
 
   const startEditing = (id: number) => {
@@ -202,10 +242,15 @@ const FilterSetting = () => {
 
       <div className="flex items-center justify-between">
         <h1 className="mb-0! text-xl font-bold">{t('filterSettings')}</h1>
-        <button onClick={addRule} className="flex items-center space-x-2 text-base">
-          <icons.Add size="16" color="var(--text-primary)" />
-          <span>{t('addRule')}</span>
-        </button>
+        <div className="flex items-center space-x-2">
+          <button onClick={openPresetDialog} className="flex items-center space-x-2 text-base">
+            <span>{t('usePreset')}</span>
+          </button>
+          <button onClick={addRule} className="flex items-center space-x-2 text-base">
+            <icons.Add size="16" color="var(--text-primary)" />
+            <span>{t('addRule')}</span>
+          </button>
+        </div>
       </div>
 
       <div className="mt-8 space-y-3">
@@ -235,6 +280,33 @@ const FilterSetting = () => {
         onSave={saveRule}
         initialFilter={editingFilter}
       />
+
+      <Dialog isOpen={isPresetDialogOpen} onClose={() => setIsPresetDialogOpen(false)} title={t('presetDialogTitle')}>
+        <div className="space-y-4">
+          <p className="text-secondary text-sm">{t('selectPreset')}</p>
+          <div className="space-y-3">
+            {FILTER_PRESETS.map((preset, index) => (
+              <div
+                key={index}
+                className="cursor-pointer rounded border border-gray-300 p-3 hover:bg-[var(--bg-secondary)]"
+                role="button"
+                tabIndex={0}
+                onClick={() => applyPreset(preset)}
+                onKeyDown={handleKeyboardClick}>
+                <h3 className="font-medium">{preset.name}</h3>
+                <p className="text-secondary mt-1 text-sm">{preset.description}</p>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end space-x-3">
+            <button
+              onClick={() => setIsPresetDialogOpen(false)}
+              className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50">
+              {t('cancel')}
+            </button>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };

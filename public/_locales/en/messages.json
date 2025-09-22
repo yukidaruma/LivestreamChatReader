@@ -131,6 +131,30 @@
   "addRule": {
     "message": "Add new rule"
   },
+  "usePreset": {
+    "message": "Use Preset"
+  },
+  "presetDialogTitle": {
+    "message": "Select Preset"
+  },
+  "selectPreset": {
+    "message": "Choose a preset to use"
+  },
+  "presetUrlBlock": {
+    "message": "URL Block"
+  },
+  "presetUrlBlockDescription": {
+    "message": "Stops reading messages that contain URLs."
+  },
+  "presetUrlToLink": {
+    "message": "Read URL as \"link\""
+  },
+  "presetUrlToLinkDescription": {
+    "message": "Replaces URLs with the word 'link' when reading aloud."
+  },
+  "linkReplacement": {
+    "message": "link"
+  },
   "noFilters": {
     "message": "No filters found."
   },
