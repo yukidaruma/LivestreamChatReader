@@ -68,14 +68,24 @@ const createMonitor =
         const fieldFilters = cachedValues.filters.filter(
           f => f.enabled && f.target === 'field' && f.fieldName === fieldName,
         );
-        filteredFieldValues[fieldName] = applyTextFilters(fieldValue, fieldFilters, { fieldName, logger });
+        const result = applyTextFilters(fieldValue, fieldFilters, { fieldName, logger });
+        if (result === null) {
+          return null;
+        }
+
+        filteredFieldValues[fieldName] = result;
       }
 
       let formattedText = formatText(cachedValues.template, filteredFieldValues);
 
       // Apply output-level filters
       const outputFilters = cachedValues.filters.filter(f => f.enabled && f.target === 'output');
-      formattedText = applyTextFilters(formattedText, outputFilters, { logger });
+      const filteredText = applyTextFilters(formattedText, outputFilters, { logger });
+      if (filteredText === null) {
+        return null;
+      }
+
+      formattedText = filteredText;
 
       // Re-normalize whitespace. formattedText may contain extra spacing from:
       // - formatText: user-supplied format string with multiple spaces

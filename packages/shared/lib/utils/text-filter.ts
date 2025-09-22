@@ -1,14 +1,16 @@
 import type { logger as loggerType } from './logger';
 import type { CommandFilter, TextFilter } from '@extension/storage';
 
-/** @returns Transformed text, or null if the filtering should be terminated */
+/** @returns Command result; null if the speech should be terminated */
 const executeCommand = (text: string, filter: CommandFilter, logger?: typeof loggerType): string | null => {
   switch (filter.command) {
     case 'mute': {
       if (filter.pattern) {
         try {
           const regex = new RegExp(filter.isRegex ? filter.pattern : RegExp.escape(filter.pattern), 'i');
-          if (regex.test(text)) {
+          const match = regex.test(text);
+          const isNot = !!filter.options?.isNot;
+          if (match !== isNot) {
             return null;
           }
         } catch (error) {
@@ -25,11 +27,12 @@ const executeCommand = (text: string, filter: CommandFilter, logger?: typeof log
   }
 };
 
+/** @returns Text after transformation; null if the speech should be terminated */
 export const applyTextFilters = (
   text: string,
   filters: TextFilter[],
   { fieldName, logger }: { fieldName?: string; logger?: typeof loggerType } = {},
-): string => {
+): string | null => {
   let result = text;
 
   for (const filter of filters) {
@@ -53,7 +56,7 @@ export const applyTextFilters = (
       case 'command': {
         const commandResult = executeCommand(result, filter, logger);
         if (commandResult === null) {
-          return '';
+          return null;
         }
 
         result = commandResult;

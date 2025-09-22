@@ -106,12 +106,16 @@ export type PatternFilter = BaseTextFilter & {
   isRegex?: boolean;
   pattern: string;
   replacement: string;
+  options?: never;
 };
 export type MuteCommandFilter = BaseTextFilter & {
   type: 'command';
   command: 'mute';
   isRegex?: boolean;
   pattern?: string;
+  options?: {
+    isNot?: boolean;
+  };
   replacement?: never;
 };
 export type CommandFilter = MuteCommandFilter;

@@ -138,7 +138,19 @@
     "message": "プリセット選択"
   },
   "selectPreset": {
-    "message": "使用するプリセットを選択してください"
+    "message": "使用するプリセットを選択してください。"
+  },
+  "presetAllowlistUser": {
+    "message": "特定のユーザーのメッセージのみ読み上げる"
+  },
+  "presetAllowlistUserDescription": {
+    "message": "特定のユーザーのメッセージのみを読み上げます。検索対象を編集してユーザー名を指定してください。"
+  },
+  "presetUsageHint": {
+    "message": "ヒント: プリセットは、追加後に好みに応じて「検索対象」などを変更できます。"
+  },
+  "placeholder_replaceMe": {
+    "message": "(ユーザー名)"
   },
   "presetUrlBlock": {
     "message": "URLブロック"
@@ -147,7 +159,7 @@
     "message": "URLを含むメッセージをミュートします。"
   },
   "presetUrlToLink": {
-    "message": "URL → リンク"
+    "message": "URLを「リンク」と読む"
   },
   "presetUrlToLinkDescription": {
     "message": "URLを「リンク」という言葉に置き換えて読み上げます。"
@@ -166,6 +178,9 @@
   },
   "useRegularExpression": {
     "message": "正規表現を使用する"
+  },
+  "invertFilterPattern": {
+    "message": "検索条件を反転する (指定した内容を含まないものを対象とする)"
   },
   "filterPattern": {
     "message": "検索対象"
@@ -198,7 +213,7 @@
     "message": "メッセージの読み上げを停止"
   },
   "filterTarget": {
-    "message": "検索文字列"
+    "message": "適用対象"
   },
   "empty": {
     "message": "(空白)"

@@ -138,7 +138,19 @@
     "message": "Select Preset"
   },
   "selectPreset": {
-    "message": "Choose a preset to use"
+    "message": "Choose a preset to use."
+  },
+  "presetAllowlistUser": {
+    "message": "Speak messages only from a specific user"
+  },
+  "presetAllowlistUserDescription": {
+    "message": "Only speak messages from a specific user. You need to edit the search pattern to specify the user name."
+  },
+  "presetUsageHint": {
+    "message": "Hint: After adding a preset, you can modify settings like \"Search pattern\" to your preference."
+  },
+  "placeholder_replaceMe": {
+    "message": "REPLACE ME"
   },
   "presetUrlBlock": {
     "message": "URL Block"
@@ -166,6 +178,9 @@
   },
   "useRegularExpression": {
     "message": "Use Regular Expression"
+  },
+  "invertFilterPattern": {
+    "message": "Invert search condition (e.g., mute users other specified one)"
   },
   "filterPattern": {
     "message": "Search pattern"

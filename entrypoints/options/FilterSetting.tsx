@@ -33,9 +33,28 @@ const DEFAULT_FILTER_VALUES = {
   replacement: '',
   isRegex: false,
   command: 'mute' as const,
+  options: {
+    isNot: false,
+  },
 };
 
 const FILTER_PRESETS: FilterPreset[] = [
+  {
+    name: t('presetAllowlistUser'),
+    description: t('presetAllowlistUserDescription'),
+    filter: {
+      enabled: true,
+      type: 'command',
+      command: 'mute',
+      target: 'field',
+      fieldName: 'name',
+      pattern: t('placeholder_replaceMe'),
+      isRegex: false,
+      options: {
+        isNot: true,
+      },
+    },
+  },
   {
     name: t('presetUrlBlock'),
     description: t('presetUrlBlockDescription'),
@@ -93,7 +112,11 @@ const SortableFilterItem = ({ filter, onEdit, onDelete }: SortableFilterItemProp
         tabIndex={0}
         onKeyDown={handleKeyboardClick}>
         <div>
-          {filter.target === 'field' && <span className="text-secondary">[{unsafeT(filter.fieldName!)}]</span>}
+          {filter.target === 'field' && (
+            <span className="text-secondary">
+              [{t('filterTarget')} - {unsafeT(filter.fieldName!)}]
+            </span>
+          )}
           <div className="flex items-center space-x-2">
             {filter.type === 'pattern' && (
               <>
@@ -109,6 +132,7 @@ const SortableFilterItem = ({ filter, onEdit, onDelete }: SortableFilterItemProp
             {filter.type === 'command' && (
               <>
                 <code>{filter.command}</code>
+                {filter.options?.isNot && <span className="font-bold">NOT</span>}
                 <span>{filter.pattern && filter.pattern}</span>
               </>
             )}
@@ -284,6 +308,7 @@ const FilterSetting = () => {
       <Dialog isOpen={isPresetDialogOpen} onClose={() => setIsPresetDialogOpen(false)} title={t('presetDialogTitle')}>
         <div className="space-y-4">
           <p className="text-secondary text-sm">{t('selectPreset')}</p>
+          <p className="text-secondary text-xs">{t('presetUsageHint')}</p>
           <div className="space-y-3">
             {FILTER_PRESETS.map((preset, index) => (
               <div
@@ -319,6 +344,7 @@ const FilterRuleDialog = ({ isOpen, onClose, onSave, initialFilter }: FilterRule
   const [replacement, setReplacement] = useState('');
   const [isRegex, setIsRegex] = useState(false);
   const [command, setCommand] = useState<FilterCommandName>('mute');
+  const [conditionNot, setConditionNot] = useState(false);
   const [regexError, setRegexError] = useState<string | null>(null);
 
   // Initialize form with initial filter data
@@ -334,6 +360,7 @@ const FilterRuleDialog = ({ isOpen, onClose, onSave, initialFilter }: FilterRule
     setReplacement(values.replacement);
     setIsRegex(values.isRegex);
     setCommand(values.command);
+    setConditionNot(values.options?.isNot ?? false);
     setRegexError(null);
   }, [isOpen, initialFilter]);
 
@@ -381,7 +408,12 @@ const FilterRuleDialog = ({ isOpen, onClose, onSave, initialFilter }: FilterRule
       isRegex,
       ...(target === 'field' && { fieldName }),
       ...(filterType === 'pattern' && { replacement: replacement.trim() }),
-      ...(filterType === 'command' && { command }),
+      ...(filterType === 'command' && {
+        command,
+        options: {
+          isNot: conditionNot,
+        },
+      }),
     } as TextFilterWithoutId;
 
     onSave(filterData);
@@ -460,6 +492,17 @@ const FilterRuleDialog = ({ isOpen, onClose, onSave, initialFilter }: FilterRule
               className="rounded border border-gray-300"
             />
           </label>
+        )}
+
+        {filterType === 'command' && command === 'mute' && (
+          <div>
+            <LabeledToggleButton
+              checked={conditionNot}
+              onChange={() => setConditionNot(prev => !prev)}
+              description={t('invertFilterPattern')}
+              srOnlyLabel={conditionNot ? t('enabled') : t('disabled')}
+            />
+          </div>
         )}
 
         <div className="flex justify-end space-x-3">

@@ -172,7 +172,7 @@ describe('Text Filter Functions', () => {
         ];
 
         const result = applyTextFilters('Hello World!', filters);
-        assert.equal(result, '');
+        assert.equal(result, null);
       });
 
       it('should ignore unknown command', () => {
@@ -246,7 +246,7 @@ describe('Text Filter Functions', () => {
         ];
 
         const result1 = applyTextFilters('Hello World!', filters, { fieldName: 'body' });
-        assert.equal(result1, '');
+        assert.equal(result1, null);
 
         const result2 = applyTextFilters('Hello World!', filters, { fieldName: 'name' });
         assert.equal(result2, 'Hello World!');
@@ -265,7 +265,7 @@ describe('Text Filter Functions', () => {
         ];
 
         const result = applyTextFilters('Hello World!', filters);
-        assert.equal(result, '');
+        assert.equal(result, null);
       });
 
       it('should not mute when text pattern does not match', () => {
@@ -306,7 +306,7 @@ describe('Text Filter Functions', () => {
         ];
 
         const result = applyTextFilters('Hello World!', filters);
-        assert.equal(result, '');
+        assert.equal(result, null);
       });
 
       it('should not mute when regexp pattern does not match', () => {
@@ -382,7 +382,7 @@ describe('Text Filter Functions', () => {
           ];
 
           const result = applyTextFilters('Hello World!', filters);
-          assert.equal(result, '');
+          assert.equal(result, null);
         });
 
         it('should use case insensitive match for command with regex', () => {
@@ -399,7 +399,7 @@ describe('Text Filter Functions', () => {
           ];
 
           const result = applyTextFilters('Hello World!', filters);
-          assert.equal(result, '');
+          assert.equal(result, null);
         });
       });
 
@@ -424,7 +424,93 @@ describe('Text Filter Functions', () => {
         ];
 
         const result = applyTextFilters('Hello World!', filters);
-        assert.equal(result, '');
+        assert.equal(result, null);
+      });
+
+      it('should mute when text pattern does not match with isNot option for allowlist', () => {
+        const filters: TextFilter[] = [
+          {
+            id: 1,
+            enabled: true,
+            target: 'output',
+            type: 'command',
+            command: 'mute',
+            pattern: 'Allowlist',
+            options: {
+              isNot: true,
+            },
+          },
+        ];
+
+        const result = applyTextFilters('Hello World!', filters);
+        assert.equal(result, null);
+      });
+
+      it('should not mute when text pattern matches with isNot option', () => {
+        const filters: TextFilter[] = [
+          {
+            id: 1,
+            enabled: true,
+            target: 'output',
+            type: 'command',
+            command: 'mute',
+            pattern: 'Hello',
+            options: {
+              isNot: true,
+            },
+          },
+          {
+            id: 2,
+            enabled: true,
+            target: 'output',
+            type: 'pattern',
+            pattern: 'World',
+            replacement: 'Universe',
+          },
+        ];
+
+        const result = applyTextFilters('Hello World!', filters);
+        assert.equal(result, 'Hello Universe!');
+      });
+
+      it('should mute when regex pattern does not match with isNot option', () => {
+        const filters: TextFilter[] = [
+          {
+            id: 1,
+            enabled: true,
+            target: 'output',
+            type: 'command',
+            command: 'mute',
+            isRegex: true,
+            pattern: 'White.*',
+            options: {
+              isNot: true,
+            },
+          },
+        ];
+
+        const result = applyTextFilters('Hello World!', filters);
+        assert.equal(result, null);
+      });
+
+      it('should not mute when regex pattern matches with isNot option', () => {
+        const filters: TextFilter[] = [
+          {
+            id: 1,
+            enabled: true,
+            target: 'output',
+            type: 'command',
+            command: 'mute',
+            isRegex: true,
+            pattern: 'H.llo',
+            options: {
+              isNot: true,
+            },
+          },
+        ];
+
+        const result = applyTextFilters('Hello World!', filters);
+        assert.equal(result, 'Hello World!');
       });
     });
 
