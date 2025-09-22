@@ -1,6 +1,6 @@
 {
   "name": "livestream-chat-reader",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Chrome Extension that reads YouTube livestream chat messages aloud with text-to-speech.",
   "license": "MIT",
   "private": true,

@@ -1,5 +1,16 @@
 # Changelog
 
+## Upcoming
+- Disable text-to-speech for specific channels
+
+## 2.1.0 (2025-09-22)
+### Added
+- "Filter" setting
+- "About" page
+## Changed
+- Make Settings page UI consistent
+- Increase contrast in dark theme
+
 ## 2.0.0 (2025-09-21)
 ### Added
 - "Speech Rate" setting
@@ -13,7 +24,7 @@
 ## 1.0.1 (2025-08-05)
 ### Added
 - Twitch support
-- Speech template setting
+- "Speech Template" setting
 ### Fixed
 - Default light theme not being applied
 - TTS not working without user interaction
@@ -22,5 +33,5 @@
 ### Added
 - YouTube support
 - Internationalization (English, Japanese)
-- "Popup" button to toggle extension status (Enabled/Disabled)
+- Popup button to toggle extension status (Enabled/Disabled)
 - Settings page (Color Theme, Voice Engine, Voice Volume, Speech Test)
