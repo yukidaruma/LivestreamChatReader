@@ -69,11 +69,11 @@ html[data-theme='dark'] {
 }
 
 /* Element styles */
-a:not(button a) {
+a:not(:is(button a, .default)) {
   color: var(--color-blue-600);
   text-decoration: underline;
 }
-html[data-theme='dark'] a:not(button a) {
+html[data-theme='dark'] a:not(:is(button a, .default)) {
   color: var(--color-blue-400);
 }
 

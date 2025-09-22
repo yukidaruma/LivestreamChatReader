@@ -1,9 +1,5 @@
 @import '../options/Options.css';
 
-h2 {
-  margin: 0.5em 0;
-}
-
 /* Chat message styles */
 #items {
   @apply border border-gray-700;
@@ -20,7 +16,7 @@ yt-live-chat-text-message-renderer.auto-message {
   @apply bg-blue-950;
 }
 #author-name {
-  @apply mr-1 font-semibold text-blue-700;
+  @apply font-semibold text-blue-700;
 }
 [data-theme='dark'] #author-name {
   @apply text-blue-300;
@@ -39,12 +35,4 @@ yt-live-chat-text-message-renderer.auto-message {
 }
 .mode-toggle.auto {
   @apply text-green-600;
-}
-
-/* Auto mode overrides */
-body[data-auto-mode='true'] .mode-toggle.manual {
-  display: none;
-}
-body[data-auto-mode='false'] .mode-toggle.auto {
-  display: none;
 }

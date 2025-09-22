@@ -10,7 +10,7 @@ html {
 }
 
 .App {
-  @apply mx-auto max-w-5xl p-6;
+  @apply mx-auto max-w-5xl px-6;
 }
 
 h1 {

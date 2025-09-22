@@ -44,6 +44,15 @@
   "settingsTitle": {
     "message": "設定"
   },
+  "filterSettings": {
+    "message": "フィルタ設定"
+  },
+  "testPage": {
+    "message": "テスト用画面"
+  },
+  "testPageTitle": {
+    "message": "音声読み上げ テスト用画面"
+  },
   "extensionState": {
     "message": "拡張機能のステータス"
   },
@@ -98,12 +107,6 @@
   "openPage": {
     "message": "$1を開く"
   },
-  "testPage": {
-    "message": "テスト用画面"
-  },
-  "filterSettings": {
-    "message": "フィルタ設定"
-  },
   "filtersInUse": {
     "message": "$1個のフィルタを使用中"
   },
@@ -123,7 +126,7 @@
     "message": "設定に戻る"
   },
   "extensionStateDescription": {
-    "message": "ライブストリームチャットメッセージの音声読み上げ機能をオンまたはオフにします。"
+    "message": "ライブ配信チャットの音声読み上げ機能をオンまたはオフにします。"
   },
   "themeDescription": {
     "message": "ライトモードとダークモードを選択します。"
@@ -220,5 +223,8 @@
   },
   "hintFilter": {
     "message": "ヒント: フィルタ設定を使用してみましょう！"
+  },
+  "extensionDisabledTestMessage": {
+    "message": "拡張機能が無効です。チャット音声読み上げ機能をテストするには拡張機能を有効にしてください。"
   }
 }

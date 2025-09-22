@@ -275,12 +275,7 @@ const Settings = () => {
               {enabledFilterCount === 0 ? t('noFilters') : t('filtersInUse', enabledFilterCount.toString())}
             </span>
           </div>
-          <a href="#filter">{t('openPage', t('filterSettings'))}</a>
-        </div>
-
-        <div>
-          <h2>{t('testPage')}</h2>
-          <a href="chat-test.html">{t('openPage', t('testPage'))}</a>
+          <p className="text-secondary text-sm">{t('filterSettingsDescription')}</p>
         </div>
 
         {!isInline && (

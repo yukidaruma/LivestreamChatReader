@@ -44,6 +44,15 @@
   "settingsTitle": {
     "message": "Settings"
   },
+  "filterSettings": {
+    "message": "Filter Settings"
+  },
+  "testPage": {
+    "message": "Test Page"
+  },
+  "testPageTitle": {
+    "message": "Text-to-speech test screen"
+  },
   "extensionState": {
     "message": "Extension State"
   },
@@ -97,12 +106,6 @@
   },
   "openPage": {
     "message": "Open $1"
-  },
-  "testPage": {
-    "message": "Test Page"
-  },
-  "filterSettings": {
-    "message": "Filter Settings"
   },
   "filtersInUse": {
     "message": "$1 filters in use"
@@ -220,5 +223,8 @@
   },
   "hintFilter": {
     "message": "Hint: You can use filters. Try creating one!"
+  },
+  "extensionDisabledTestMessage": {
+    "message": "Extension is disabled. Enable the extension to test the chat text-to-speech functionality."
   }
 }

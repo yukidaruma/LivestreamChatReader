@@ -1,5 +1,5 @@
 import { logConsoleStorage, logStorage } from '@extension/storage';
-import type { LogEntry } from '@extension/storage/lib/base/types';
+import type { LogEntry } from '@extension/storage';
 
 type LogTask = {
   prefix: string;

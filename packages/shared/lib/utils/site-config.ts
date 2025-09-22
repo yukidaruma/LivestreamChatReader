@@ -40,7 +40,7 @@ export const siteConfigs = [
 
 export const findSiteConfigByUrl = (url: string): SiteConfig | null => {
   // Use YouTube config for test screen
-  if (url.startsWith('chrome-extension:') && url.includes('/chat-test.html')) {
+  if (url.startsWith('chrome-extension:') && /options.html(\?\d*)?#chat-test/.test(url)) {
     return siteConfigs[0];
   }
 

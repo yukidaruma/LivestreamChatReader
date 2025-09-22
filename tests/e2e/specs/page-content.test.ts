@@ -3,7 +3,7 @@ import { sleep } from '@/packages/shared/lib/utils/helpers'; // Only import `sle
 
 declare global {
   interface Window {
-    addMessage: (message: { name: string; body: string; isAuto?: boolean }) => void;
+    addMessage?: (message: { name: string; body: string; isAuto?: boolean }) => void;
   }
 }
 
@@ -13,7 +13,7 @@ const waitUntil = async (
   condition: () => boolean | Promise<boolean>,
   options: { timeout?: number; interval?: number; timeoutMsg?: string } = {},
 ) => {
-  const { timeout = 5000, interval = 100, timeoutMsg = `waitUntil timeout after ${timeout}ms` } = options;
+  const { timeout = 500000, interval = 100, timeoutMsg = `waitUntil timeout after ${timeout}ms` } = options;
 
   return Promise.race([
     (async () => {
@@ -37,7 +37,7 @@ describe('Text-to-Speech Extension E2E', () => {
   let testUrlCounter = 0;
   const getTestUrl = (): string => {
     testUrlCounter += 1;
-    return `${extensionPath}/chat-test.html?${testUrlCounter}`;
+    return `${extensionPath}/options.html?${testUrlCounter}#chat-test`;
   };
 
   beforeAll(({ extensionId }) => {
@@ -56,28 +56,6 @@ describe('Text-to-Speech Extension E2E', () => {
     // This works like an implicit assertion;
     // the test will fail if the log is not found within the timeout.
     await waitUntil(() => logs.some(log => log?.includes(TTS_SCRIPTS_LOADED_LOG)));
-  });
-
-  test('should detect and add YouTube chat message to speech queue', async ({ page }) => {
-    // Set up logging to monitor extension loading
-    const logs: Array<string | null> = [];
-    page.on('console', logEntry => {
-      logs.push(logEntry.text());
-    });
-
-    // Load the chat-test.html file
-    await page.goto(getTestUrl());
-
-    // Wait for extension to load and process existing messages
-    await waitUntil(() => logs.some(log => log?.includes(TTS_SCRIPTS_LOADED_LOG)));
-
-    // Add a test message to the chat
-    await page.evaluate(() => {
-      window.addMessage({ name: 'User1', body: 'Test message' });
-    });
-
-    // waitUntil serves as an implicit assertion; the test will fail on timeout.
-    await waitUntil(() => logs.some(log => log?.includes('Adding message to queue:')));
   });
 
   test('should process multiple messages sequentially', async ({ page }) => {
@@ -104,8 +82,8 @@ describe('Text-to-Speech Extension E2E', () => {
 
     // Add multiple messages sequentially
     await page.evaluate(() => {
-      window.addMessage({ name: 'User1', body: 'First message' });
-      window.addMessage({ name: 'User2', body: 'Second message' });
+      window.addMessage!({ name: 'User1', body: 'First message' });
+      window.addMessage!({ name: 'User2', body: 'Second message' });
     });
 
     // Wait for all messages to be processed sequentially

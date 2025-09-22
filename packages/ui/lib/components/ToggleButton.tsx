@@ -39,7 +39,7 @@ export const LabeledToggleButton = (props: LabeledToggleButtonProps) => {
         {description && <span className="flex-1 select-none">{description}</span>}
         <ToggleButton {...restProps} />
       </div>
-      {currentState && <div className="mt-1 text-xs text-gray-500 select-none">{currentState}</div>}
+      {currentState && <div className="text-secondary mt-1 text-xs select-none">{currentState}</div>}
     </label>
   );
 };

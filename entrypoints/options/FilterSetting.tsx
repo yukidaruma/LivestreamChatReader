@@ -260,17 +260,13 @@ const FilterSetting = () => {
 
   return (
     <div className="text-sm">
-      <p className="mb-4">
-        <button onClick={() => (location.hash = '')}>{t('backToSettings')}</button>
-      </p>
-
       <div className="flex items-center justify-between">
         <h1 className="mb-0! text-xl font-bold">{t('filterSettings')}</h1>
         <div className="flex items-center space-x-2">
-          <button onClick={openPresetDialog} className="flex items-center space-x-2 text-base">
+          <button onClick={openPresetDialog} className="flex items-center space-x-2 text-xs">
             <span>{t('usePreset')}</span>
           </button>
-          <button onClick={addRule} className="flex items-center space-x-2 text-base">
+          <button onClick={addRule} className="flex items-center space-x-2 text-xs">
             <icons.Add size="16" color="var(--text-primary)" />
             <span>{t('addRule')}</span>
           </button>
@@ -324,11 +320,7 @@ const FilterSetting = () => {
             ))}
           </div>
           <div className="flex justify-end space-x-3">
-            <button
-              onClick={() => setIsPresetDialogOpen(false)}
-              className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50">
-              {t('cancel')}
-            </button>
+            <button onClick={() => setIsPresetDialogOpen(false)}>{t('cancel')}</button>
           </div>
         </div>
       </Dialog>
@@ -506,13 +498,11 @@ const FilterRuleDialog = ({ isOpen, onClose, onSave, initialFilter }: FilterRule
         )}
 
         <div className="flex justify-end space-x-3">
-          <button onClick={onClose} className="rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50">
-            {t('cancel')}
-          </button>
+          <button onClick={onClose}>{t('cancel')}</button>
           <button
             onClick={handleSave}
             disabled={!isOpen || !!regexError || pattern.trim() === ''}
-            className="button-bg-blue rounded px-4 py-2">
+            className="button-bg-blue">
             {initialFilter ? t('save') : t('addRule')}
           </button>
         </div>
