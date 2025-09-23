@@ -1,7 +1,10 @@
 # Changelog
 
-## Upcoming
-- Disable text-to-speech for specific channels
+## 2.2.0 (2025-09-23)
+### Added
+- Add keyboard shortcut to enable/disable extension
+### Changed
+- Display "Changelog" in "About" page with formatting
 
 ## 2.1.0 (2025-09-22)
 ### Added
