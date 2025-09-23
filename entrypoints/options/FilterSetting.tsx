@@ -80,6 +80,18 @@ const FILTER_PRESETS: FilterPreset[] = [
       isRegex: true,
     },
   },
+  {
+    name: t('presetLimitLength'),
+    description: t('presetLimitLengthDescription'),
+    filter: {
+      enabled: true,
+      type: 'pattern',
+      target: 'output',
+      pattern: '^(.{20}).*$',
+      replacement: '$1',
+      isRegex: true,
+    },
+  },
 ];
 
 type SortableFilterItemProps = {

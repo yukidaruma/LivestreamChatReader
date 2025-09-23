@@ -171,6 +171,12 @@
   "presetUrlToLinkDescription": {
     "message": "Replaces URLs with the word 'link' when reading aloud."
   },
+  "presetLimitLength": {
+    "message": "Limit message length to 20 characters"
+  },
+  "presetLimitLengthDescription": {
+    "message": "Truncates messages longer than 20 characters."
+  },
   "linkReplacement": {
     "message": "link"
   },

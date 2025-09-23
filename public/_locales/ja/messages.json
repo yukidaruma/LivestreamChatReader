@@ -171,6 +171,12 @@
   "presetUrlToLinkDescription": {
     "message": "URLを「リンク」という言葉に置き換えて読み上げます。"
   },
+  "presetLimitLength": {
+    "message": "メッセージ長を20文字に制限"
+  },
+  "presetLimitLengthDescription": {
+    "message": "20文字を超えるメッセージを省略して読み上げます。"
+  },
   "linkReplacement": {
     "message": "リンク"
   },
