@@ -2,7 +2,7 @@ import { main } from '../content';
 import { t, useMount, useStorage } from '@extension/shared';
 import { extensionEnabledStorage } from '@extension/storage';
 import { cn } from '@extension/ui';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import './ChatTest.css';
 
 const MAX_MESSAGE_COUNT = 20;
@@ -63,8 +63,6 @@ const ChatTest = () => {
       }
       return updated;
     });
-
-    console.log('Message added:', name, body);
   };
 
   const addManualMessage = () => {

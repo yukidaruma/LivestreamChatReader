@@ -5,7 +5,7 @@ import Settings from './Settings';
 import { useThemeStorage, withErrorBoundary, withSuspense, t, useMount, useStorage } from '@extension/shared';
 import { textFilterStorage } from '@extension/storage';
 import { ErrorDisplay, LoadingSpinner } from '@extension/ui';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './Options.css';
 
 type TabType = 'settings' | 'filter' | 'chat-test' | 'about';
