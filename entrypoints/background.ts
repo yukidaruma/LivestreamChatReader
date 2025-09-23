@@ -1,11 +1,7 @@
 import 'webextension-polyfill';
-import { logger } from '@extension/shared/lib/utils';
-import type {
-  BackgroundRequest,
-  TTSSpeakRequest,
-  TTSCancelRequest,
-  InferBackgroundResponse,
-} from '@extension/shared/lib/utils';
+import { updateIcon, logger } from '@extension/shared';
+import { extensionEnabledStorage } from '@extension/storage';
+import type { BackgroundRequest, TTSSpeakRequest, TTSCancelRequest, InferBackgroundResponse } from '@extension/shared';
 
 type SendResponseFunction<T extends BackgroundRequest> = (response: InferBackgroundResponse<T>) => void;
 type BackgroundRequestHandler<T extends BackgroundRequest> = (
@@ -104,6 +100,15 @@ const setWebDriverShim = () => {
 };
 
 export default defineBackground(() => {
+  // Handle commands (keyboard shortcuts) for the extension
+  browser.commands.onCommand.addListener(command => {
+    logger.log('Command received:', command);
+
+    if (command === 'toggle-activation') {
+      extensionEnabledStorage.toggle().then(updateIcon);
+    }
+  });
+
   // Message listener for TTS commands
   browser.runtime.onMessage.addListener(
     (message: BackgroundRequest, _sender, sendResponse: SendResponseFunction<BackgroundRequest>) => {

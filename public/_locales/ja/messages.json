@@ -7,6 +7,10 @@
     "description": "Extension name",
     "message": "Livestream Chat Reader - ライブ配信チャットの読み上げ"
   },
+  "toggleActivationCommandDescription": {
+    "description": "Description for the keyboard command (shortcut) referenced in manifest.json.",
+    "message": "拡張機能の有効状態を切り替える"
+  },
   "extensionNameShort": {
     "description": "Short extension name used in UI",
     "message": "Livestream Chat Reader"
@@ -232,6 +236,15 @@
   },
   "about": {
     "message": "$1 について"
+  },
+  "tips": {
+    "message": "ヒント"
+  },
+  "aboutTipKeyboardShortcut": {
+    "message": "Alt+M (デフォルト) のキーボードショートカットを使用して、拡張機能の有効状態を切り替えることができます。"
+  },
+  "aboutTipKeyboardShortcutLink": {
+    "message": "ショートカットキーを変更するには、次の Chrome の設定画面を開いてください:"
   },
   "version": {
     "message": "バージョン"

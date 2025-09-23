@@ -7,6 +7,10 @@
     "description": "Extension name",
     "message": "Livestream Chat Reader - Chat Text-to-Speech for Livestreams"
   },
+  "toggleActivationCommandDescription": {
+    "description": "Description for the keyboard command (shortcut) referenced in manifest.json.",
+    "message": "Toggle extension activation"
+  },
   "extensionNameShort": {
     "description": "Short extension name used in UI",
     "message": "Livestream Chat Reader"
@@ -232,6 +236,15 @@
   },
   "about": {
     "message": "About $1"
+  },
+  "tips": {
+    "message": "Tips"
+  },
+  "aboutTipKeyboardShortcut": {
+    "message": "You can use the keyboard shortcut Alt+M (default) to toggle the extension activation."
+  },
+  "aboutTipKeyboardShortcutLink": {
+    "message": "To change the shortcut key, open the following Chrome settings page:"
   },
   "version": {
     "message": "Version"

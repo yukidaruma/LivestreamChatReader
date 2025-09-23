@@ -17,6 +17,14 @@ export default defineConfig({
     version: packageJson.version,
     name: '__MSG_extensionName__',
     description: '__MSG_extensionDescription__',
+    commands: {
+      'toggle-activation': {
+        description: '__MSG_toggleActivationCommandDescription__',
+        suggested_key: {
+          default: 'Alt+M',
+        },
+      },
+    },
     host_permissions: [
       'https://www.youtube.com/live_chat*',
       'https://studio.youtube.com/live_chat*',

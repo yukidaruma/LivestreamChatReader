@@ -19,6 +19,20 @@ const About = () => {
       </div>
 
       <div>
+        <h2>{t('tips')}</h2>
+        <ul className="ml-8 list-disc [&_li_li]:ml-8 [&_li_li]:list-[circle]">
+          <li>
+            {t('aboutTipKeyboardShortcut')}
+            <ul>
+              <li>
+                {t('aboutTipKeyboardShortcutLink')} <code>chrome://extensions/shortcuts</code>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div>
         <h2>{t('changelog')}</h2>
         <p className="mb-2">
           <a
