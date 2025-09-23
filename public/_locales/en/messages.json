@@ -116,6 +116,9 @@
   "xProfile": {
     "message": "X profile"
   },
+  "chromeWebStore": {
+    "message": "Chrome Web Store"
+  },
   "debugPanel": {
     "message": "Debug Panel"
   },

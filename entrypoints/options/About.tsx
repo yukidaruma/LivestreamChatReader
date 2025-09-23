@@ -38,6 +38,13 @@ const About = () => {
         <h2>{t('contacts')}</h2>
         <div className="space-x-2">
           <IconButton
+            icon={icons.Chrome}
+            href={`https://chromewebstore.google.com/detail/${browser.runtime.id}`}
+            target="_blank"
+            title={t('openPage', t('chromeWebStore'))}
+            aria-label={t('chromeWebStore')}
+          />
+          <IconButton
             icon={icons.Github}
             href={PROJECT_URL_OBJECT.url}
             target="_blank"

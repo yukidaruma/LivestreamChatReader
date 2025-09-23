@@ -116,6 +116,9 @@
   "xProfile": {
     "message": "Xアカウント"
   },
+  "chromeWebStore": {
+    "message": "Chrome ウェブストア"
+  },
   "debugPanel": {
     "message": "デバッグパネル"
   },
