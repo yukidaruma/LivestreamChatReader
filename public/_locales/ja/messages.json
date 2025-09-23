@@ -18,9 +18,6 @@
   "changelog": {
     "message": "更新履歴"
   },
-  "readChangelogOnGitHub": {
-    "message": "GitHubで更新履歴を読む"
-  },
   "contacts": {
     "message": "連絡先"
   },

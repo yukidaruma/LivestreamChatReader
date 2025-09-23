@@ -1,3 +1,4 @@
+import { MarkdownRenderer } from './markdown';
 import rawChangelog from '../../CHANGELOG.md?raw';
 import { PROJECT_URL_OBJECT, t } from '@extension/shared';
 import { IconButton, icons } from '@extension/ui';
@@ -20,7 +21,7 @@ const About = () => {
 
       <div>
         <h2>{t('tips')}</h2>
-        <ul className="ml-8 list-disc [&_li_li]:ml-8 [&_li_li]:list-[circle]">
+        <ul>
           <li>
             {t('aboutTipKeyboardShortcut')}
             <ul>
@@ -34,17 +35,8 @@ const About = () => {
 
       <div>
         <h2>{t('changelog')}</h2>
-        <p className="mb-2">
-          <a
-            href={`${PROJECT_URL_OBJECT.url}/blob/main/CHANGELOG.md`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:text-blue-600">
-            {t('readChangelogOnGitHub')}
-          </a>
-        </p>
-        <div className="form-control bg-secondary border-primary max-h-60 w-full max-w-none! overflow-y-scroll rounded border p-3 font-mono text-sm whitespace-pre-wrap">
-          {changelog}
+        <div className="bg-secondary border-primary max-h-60 w-full max-w-none! overflow-y-scroll rounded border p-3 text-sm whitespace-pre-wrap">
+          <MarkdownRenderer className="space-y-4 [&_*+h2]:mt-6" markdown={changelog} />
         </div>
       </div>
 

@@ -19,3 +19,14 @@ h1 {
 h2 {
   @apply mb-2 text-lg font-semibold;
 }
+h3 {
+  @apply mb-2 text-base font-semibold;
+}
+h4,
+h5,
+h6 {
+  @apply mb-2 font-medium;
+}
+ul {
+  @apply ml-4 list-disc [&_li_li]:ml-4 [&_li_li]:list-[circle];
+}
