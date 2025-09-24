@@ -66,6 +66,15 @@ const About = () => {
           />
         </div>
       </div>
+
+      <hr />
+      <p>
+        Made with <span className="text-[#80bfff]">❄</span> by{' '}
+        <a href="https://yuki.games" className="hover:text-gray-50 hover:underline" target="_blank">
+          yuki.games
+        </a>
+        .
+      </p>
     </div>
   );
 };
