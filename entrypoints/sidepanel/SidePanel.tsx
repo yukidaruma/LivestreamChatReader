@@ -1,7 +1,7 @@
 import './SidePanel.css';
 import { t, logger, useStorage, useThemeStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { logConsoleStorage, logStorage } from '@extension/storage';
-import { cn, ErrorDisplay, LabeledToggleButton, LoadingSpinner } from '@extension/ui';
+import { AlertWarning, cn, ErrorDisplay, LabeledToggleButton, LoadingSpinner } from '@extension/ui';
 import { useEffect, useState } from 'react';
 import type { LogEntry } from '@extension/storage/lib/base/types';
 
@@ -117,16 +117,9 @@ const SidePanel = () => {
   return (
     <div className="App">
       <div className="px-6 pt-6">
-        <div className="warning">
-          <div className="flex items-center">
-            <div className="ml-3">
-              <h3>{t('debugPanel')}</h3>
-              <div className="text">
-                <p>{t('debugPanelDescription')}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <AlertWarning heading={t('debugPanel')}>
+          <p>{t('debugFeatureDescription')}</p>
+        </AlertWarning>
 
         {/* Technical Information */}
         <div className="mt-4 space-y-2">

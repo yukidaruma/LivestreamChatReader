@@ -1,3 +1,4 @@
+export * from './AlertWarning';
 export * from './ConfirmDialog';
 export * from './ConfirmProvider';
 export * from './Dialog';

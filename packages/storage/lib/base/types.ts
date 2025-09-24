@@ -1,4 +1,6 @@
 /* eslint-disable import-x/exports-last */
+import { validateRegex } from '@extension/shared';
+import { z } from 'zod';
 import type { StorageEnum } from './index';
 
 export type ValueOrUpdateType<D> = D | ((prev: D) => Promise<D> | D);
@@ -92,35 +94,84 @@ export type LogStorageType = BaseStorageType<LogStateType> & {
   getRecentLogs: (count?: number) => Promise<LogEntry[]>;
 };
 
-// text-filter-storage.ts
-export type BaseTextFilter = {
-  id: number;
-  enabled: boolean;
-  target: 'field' | 'output'; // Per field or spoken text
-  fieldName?: string; // Only used when the target is 'field'
-  description?: string;
-};
-export type PatternFilter = BaseTextFilter & {
-  type: 'pattern';
-  command?: never;
-  isRegex?: boolean;
-  pattern: string;
-  replacement: string;
-  options?: never;
-};
-export type MuteCommandFilter = BaseTextFilter & {
-  type: 'command';
-  command: 'mute';
-  isRegex?: boolean;
-  pattern?: string;
-  options?: {
-    isNot?: boolean;
-  };
-  replacement?: never;
-};
+// Zod schemas for text filter data
+const BaseTextFilterSchema = z.object({
+  id: z.number(),
+  enabled: z.boolean(),
+  target: z.enum(['field', 'output']),
+  fieldName: z.enum(['name', 'body']).optional(),
+  description: z.string().optional(),
+  command: z.unknown().optional(),
+  replacement: z.unknown().optional(),
+  options: z.unknown().optional(),
+});
+
+const PatternFilterSchema = BaseTextFilterSchema.extend({
+  type: z.literal('pattern'),
+  isRegex: z.boolean().optional(),
+  pattern: z.string(),
+  replacement: z.string(),
+}).refine(
+  data => {
+    if (data.isRegex && data.pattern) {
+      return validateRegex(data.pattern) === null;
+    }
+    return true;
+  },
+  {
+    message: 'Invalid regular expression pattern',
+    path: ['pattern'],
+  },
+);
+
+const MuteCommandFilterSchema = BaseTextFilterSchema.extend({
+  type: z.literal('command'),
+  command: z.literal('mute'),
+  isRegex: z.boolean().optional(),
+  pattern: z.string().optional(),
+  options: z
+    .object({
+      isNot: z.boolean().optional(),
+    })
+    .optional(),
+}).refine(
+  data => {
+    if (data.isRegex && data.pattern) {
+      return validateRegex(data.pattern) === null;
+    }
+    return true;
+  },
+  {
+    message: 'Invalid regular expression pattern',
+    path: ['pattern'],
+  },
+);
+
+export const TextFilterSchema = z.discriminatedUnion('type', [PatternFilterSchema, MuteCommandFilterSchema]);
+
+// Array schema for validating collections of filters
+export const TextFiltersArraySchema = z.array(TextFilterSchema).refine(
+  data => {
+    const seenIds = new Set<number>();
+    return !data.some(filter => {
+      const hasDuplicate = seenIds.has(filter.id);
+      seenIds.add(filter.id);
+      return hasDuplicate;
+    });
+  },
+  {
+    message: 'All filter IDs must be unique',
+  },
+);
+
+// Derive types from schemas
+export type BaseTextFilter = z.infer<typeof BaseTextFilterSchema>;
+export type PatternFilter = z.infer<typeof PatternFilterSchema>;
+export type MuteCommandFilter = z.infer<typeof MuteCommandFilterSchema>;
 export type CommandFilter = MuteCommandFilter;
 export type FilterCommandName = CommandFilter['command'];
-export type TextFilter = PatternFilter | CommandFilter;
+export type TextFilter = z.infer<typeof TextFilterSchema>;
+
 export type TextFilterStateType = {
   filters: TextFilter[];
   nextId: number;

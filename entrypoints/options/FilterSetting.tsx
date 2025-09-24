@@ -1,21 +1,13 @@
+import { JsonFilterEditor } from './JsonFilterEditor';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { t, unsafeT } from '@extension/shared';
+import { t, unsafeT, validateRegex } from '@extension/shared';
 import { textFilterStorage } from '@extension/storage';
 import { Dialog, IconButton, LabeledToggleButton, handleKeyboardClick, icons, useConfirm } from '@extension/ui';
 import { useState, useEffect } from 'react';
 import type { DragEndEvent } from '@dnd-kit/core';
 import type { FilterCommandName, TextFilter } from '@extension/storage';
-
-const validateRegex = (pattern: string): string | null => {
-  try {
-    new RegExp(pattern);
-    return null;
-  } catch (error) {
-    return error instanceof Error ? error.message : 'Invalid regular expression';
-  }
-};
 
 type TextFilterWithoutId = Omit<TextFilter, 'id'>;
 
@@ -31,12 +23,9 @@ const DEFAULT_FILTER_VALUES = {
   fieldName: 'name',
   pattern: '',
   replacement: '',
+  enabled: true,
   isRegex: false,
-  command: 'mute' as const,
-  options: {
-    isNot: false,
-  },
-};
+} satisfies TextFilterWithoutId;
 
 const FILTER_PRESETS: FilterPreset[] = [
   {
@@ -64,7 +53,6 @@ const FILTER_PRESETS: FilterPreset[] = [
       command: 'mute',
       target: 'output',
       pattern: 'https?://[^\\s]+',
-      replacement: '',
       isRegex: true,
     },
   },
@@ -176,6 +164,7 @@ const FilterSetting = () => {
   const [filters, setFilters] = useState<TextFilter[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isPresetDialogOpen, setIsPresetDialogOpen] = useState(false);
+  const [isDeveloperMode, setIsDeveloperMode] = useState(false);
   const [editingFilter, setEditingFilter] = useState<TextFilter | null>(null);
   const confirm = useConfirm();
 
@@ -191,6 +180,10 @@ const FilterSetting = () => {
 
   const openPresetDialog = () => {
     setIsPresetDialogOpen(true);
+  };
+
+  const toggleDeveloperMode = () => {
+    setIsDeveloperMode(!isDeveloperMode);
   };
 
   const applyPreset = async (preset: FilterPreset) => {
@@ -273,36 +266,49 @@ const FilterSetting = () => {
   return (
     <div className="text-sm">
       <div className="flex items-center justify-between">
-        <h1 className="mb-0! text-xl font-bold">{t('filterSettings')}</h1>
+        <h1 className="mb-0! text-xl leading-9 font-bold">{t('filterSettings')}</h1>
         <div className="flex items-center space-x-2">
-          <button onClick={openPresetDialog} className="flex items-center space-x-2 text-xs">
-            <span>{t('usePreset')}</span>
-          </button>
-          <button onClick={addRule} className="flex items-center space-x-2 text-xs">
-            <icons.Add size="16" color="var(--text-primary)" />
-            <span>{t('addRule')}</span>
-          </button>
+          {!isDeveloperMode && (
+            <>
+              <button onClick={openPresetDialog} className="flex items-center space-x-2 text-xs">
+                <span>{t('usePreset')}</span>
+              </button>
+              <button onClick={addRule} className="flex items-center space-x-2 text-xs">
+                <icons.Add size="16" color="var(--text-primary)" />
+                <span>{t('addRule')}</span>
+              </button>
+            </>
+          )}
+          <LabeledToggleButton
+            checked={isDeveloperMode}
+            onChange={toggleDeveloperMode}
+            description={t('developerMode')}
+          />
         </div>
       </div>
 
-      <div className="mt-8 space-y-3">
-        {filters.length === 0 ? (
-          <div className="text-secondary text-left">{t('noFilters')}</div>
-        ) : (
-          <>
-            <p className="text-secondary mt-8 text-sm">{t('filterOrderNote')}</p>
-            <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-              <SortableContext items={filters.map(f => f.id)} strategy={verticalListSortingStrategy}>
-                <div className="space-y-3">
-                  {filters.map(rule => (
-                    <SortableFilterItem key={rule.id} filter={rule} onEdit={startEditing} onDelete={deleteRule} />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-          </>
-        )}
-      </div>
+      {isDeveloperMode ? (
+        <JsonFilterEditor filters={filters} onClose={toggleDeveloperMode} onFiltersUpdate={setFilters} />
+      ) : (
+        <div className="mt-8 space-y-3">
+          {filters.length === 0 ? (
+            <div className="text-secondary text-left">{t('noFilters')}</div>
+          ) : (
+            <>
+              <p className="text-secondary mt-8 text-sm">{t('filterOrderNote')}</p>
+              <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext items={filters.map(f => f.id)} strategy={verticalListSortingStrategy}>
+                  <div className="space-y-3">
+                    {filters.map(rule => (
+                      <SortableFilterItem key={rule.id} filter={rule} onEdit={startEditing} onDelete={deleteRule} />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
+            </>
+          )}
+        </div>
+      )}
 
       <FilterRuleDialog
         isOpen={isDialogOpen}
@@ -315,7 +321,7 @@ const FilterSetting = () => {
 
       <Dialog isOpen={isPresetDialogOpen} onClose={() => setIsPresetDialogOpen(false)} title={t('presetDialogTitle')}>
         <div className="space-y-4">
-          <p className="text-secondary text-sm">{t('selectPreset')}</p>
+          <p className="text-secondary text-sm">{t('selectFilterPreset')}</p>
           <p className="text-secondary text-xs">{t('presetUsageHint')}</p>
           <div className="space-y-3">
             {FILTER_PRESETS.map((preset, index) => (
@@ -361,10 +367,14 @@ const FilterRuleDialog = ({ isOpen, onClose, onSave, initialFilter }: FilterRule
     setTarget(values.target);
     setFieldName(values.fieldName);
     setPattern(values.pattern);
-    setReplacement(values.replacement);
     setIsRegex(values.isRegex);
-    setCommand(values.command);
-    setConditionNot(values.options?.isNot ?? false);
+    if (values.type === 'pattern') {
+      setReplacement(values.replacement);
+    }
+    if (values.type === 'command') {
+      setCommand(values.command);
+      setConditionNot(values.options?.isNot ?? false);
+    }
     setRegexError(null);
   }, [isOpen, initialFilter]);
 
@@ -480,7 +490,7 @@ const FilterRuleDialog = ({ isOpen, onClose, onSave, initialFilter }: FilterRule
             onChange={handlePatternChange}
             className="rounded border border-gray-300"
           />
-          {regexError && <div className="mt-1 text-red-600">{regexError}</div>}
+          {regexError && <div className="mt-1 text-red-500">{regexError}</div>}
         </label>
 
         {filterType === 'pattern' && (

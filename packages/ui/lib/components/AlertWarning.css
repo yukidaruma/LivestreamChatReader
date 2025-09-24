@@ -1,0 +1,16 @@
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+.warning {
+  @apply border-l-4 border-yellow-500 bg-yellow-50 p-2 text-yellow-700;
+}
+.warning .heading {
+  @apply text-base font-medium text-yellow-800;
+}
+[data-theme='dark'] .warning {
+  @apply bg-yellow-900/20 text-yellow-200;
+}
+[data-theme='dark'] .warning .heading {
+  @apply text-yellow-300;
+}

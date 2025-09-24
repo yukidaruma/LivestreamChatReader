@@ -22,7 +22,7 @@
     "message": "連絡先"
   },
   "save": {
-    "message": "保存"
+    "message": "保存する"
   },
   "delete": {
     "message": "削除"
@@ -123,8 +123,8 @@
   "debugPanel": {
     "message": "デバッグパネル"
   },
-  "debugPanelDescription": {
-    "message": "このパネルは開発者および専門的な知識を持つユーザー向けのものです。"
+  "debugFeatureDescription": {
+    "message": "この機能は開発者および専門的な知識を持つユーザー向けのものです。"
   },
   "backToSettings": {
     "message": "設定に戻る"
@@ -144,8 +144,8 @@
   "presetDialogTitle": {
     "message": "プリセット選択"
   },
-  "selectPreset": {
-    "message": "使用するプリセットを選択してください。"
+  "selectFilterPreset": {
+    "message": "使用するフィルタープリセットを選択してください。"
   },
   "presetAllowlistUser": {
     "message": "特定のユーザーのメッセージのみ読み上げる"
@@ -233,6 +233,18 @@
   },
   "hintFilter": {
     "message": "ヒント: フィルタ設定を使用してみましょう！"
+  },
+  "developerMode": {
+    "message": "開発者モード"
+  },
+  "jsonEditingWarning": {
+    "message": "フィルタ定義を直接編集します。データの誤りはフィルターの動作に影響します。"
+  },
+  "filterSettingsJson": {
+    "message": "フィルター設定 (JSON)"
+  },
+  "jsonSyntaxError": {
+    "message": "JSON構文エラー: $1"
   },
   "extensionDisabledTestMessage": {
     "message": "拡張機能が無効です。チャット音声読み上げ機能をテストするには拡張機能を有効にしてください。"

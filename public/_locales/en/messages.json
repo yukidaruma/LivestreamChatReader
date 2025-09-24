@@ -123,8 +123,8 @@
   "debugPanel": {
     "message": "Debug Panel"
   },
-  "debugPanelDescription": {
-    "message": "This panel is intended for developers and advanced users only."
+  "debugFeatureDescription": {
+    "message": "This feature is intended for developers and advanced users only."
   },
   "backToSettings": {
     "message": "Back to Settings"
@@ -144,8 +144,8 @@
   "presetDialogTitle": {
     "message": "Select Preset"
   },
-  "selectPreset": {
-    "message": "Choose a preset to use."
+  "selectFilterPreset": {
+    "message": "Choose a filter preset to use."
   },
   "presetAllowlistUser": {
     "message": "Speak messages only from a specific user"
@@ -233,6 +233,18 @@
   },
   "hintFilter": {
     "message": "Hint: You can use filters. Try creating one!"
+  },
+  "developerMode": {
+    "message": "Developer Mode"
+  },
+  "jsonEditingWarning": {
+    "message": "Directly edit filter definitions. Data errors will affect filter behavior."
+  },
+  "filterSettingsJson": {
+    "message": "Filter Settings (JSON)"
+  },
+  "jsonSyntaxError": {
+    "message": "JSON syntax error: $1"
   },
   "extensionDisabledTestMessage": {
     "message": "Extension is disabled. Enable the extension to test the chat text-to-speech functionality."

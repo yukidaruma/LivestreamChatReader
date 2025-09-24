@@ -1,9 +1,12 @@
 {
   "name": "@extension/storage",
+  "main": "index.mts",
   "description": "chrome extension - storage",
-  "type": "module",
   "private": true,
   "sideEffects": false,
+  "type": "module",
   "types": "index.mts",
-  "main": "index.mts"
+  "dependencies": {
+    "zod": "^4.1.11"
+  }
 }
