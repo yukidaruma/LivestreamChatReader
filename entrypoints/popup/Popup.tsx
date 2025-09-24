@@ -20,10 +20,12 @@ const Popup = () => {
   return (
     <div className="App h-screen w-full">
       <header className="App-header flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold">{t('extensionNameShort')}</h1>
-          <div className="text-secondary text-xs">v{version}</div>
-        </div>
+        <a className="text-current! no-underline!" href="/options.html#about" target="_blank">
+          <div>
+            <h1 className="text-xl font-semibold">{t('extensionNameShort')}</h1>
+            <div className="text-secondary text-xs">v{version}</div>
+          </div>
+        </a>
         <IconButton
           icon={icons.Configure}
           href="/options.html"
