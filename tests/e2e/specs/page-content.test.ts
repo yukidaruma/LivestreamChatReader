@@ -81,7 +81,9 @@ describe('Text-to-Speech Extension E2E', () => {
     await page.goto(getTestUrl());
 
     // Add multiple messages sequentially
-    await page.evaluate(() => {
+    await page.evaluate(async () => {
+      await new Promise(resolve => setTimeout(resolve, 100)); // Wait for the extension to be ready
+
       window.addMessage!({ name: 'User1', body: 'First message' });
       window.addMessage!({ name: 'User2', body: 'Second message' });
     });
