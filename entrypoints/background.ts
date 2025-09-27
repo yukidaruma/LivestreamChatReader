@@ -114,6 +114,12 @@ export default defineBackground(() => {
     (message: BackgroundRequest, _sender, sendResponse: SendResponseFunction<BackgroundRequest>) => {
       // See: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onMessage#sending_an_asynchronous_response_using_sendresponse
 
+      // To make `setWebDriverShim` tree-shakable, we use environment variable
+      if (import.meta.env.VITE_E2E && message.type === 'SET_WEBDRIVER_SHIM_REQUEST') {
+        setWebDriverShim();
+        return false;
+      }
+
       logger.debug('Background received message:', message.type, message.data);
 
       switch (message.type) {
@@ -124,10 +130,6 @@ export default defineBackground(() => {
         case 'TTS_CANCEL_REQUEST':
           handleTTSCancel(message, sendResponse);
           return true;
-
-        case 'SET_WEBDRIVER_SHIM_REQUEST':
-          setWebDriverShim();
-          return false;
 
         default:
           return false;

@@ -239,7 +239,7 @@ export const main = async () => {
   // Initialize shim for E2E testing
   // Since `navigator.webdriver` is undefined on service worker,
   // we need to check it in content script.
-  if (navigator.webdriver) {
+  if (import.meta.env.VITE_E2E) {
     await initWebDriverShim();
   }
 

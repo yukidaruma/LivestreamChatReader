@@ -82,7 +82,7 @@ const context = getExecutionContext();
 const prefix = `[${context}]`;
 const logMessage = (level: 'debug' | 'info' | 'warn' | 'error', ...args: unknown[]) => {
   // E2E tests depending on the logs
-  if (navigator.webdriver) {
+  if (import.meta.env.VITE_E2E) {
     writeToConsole(prefix, level, ...args);
     return;
   }
