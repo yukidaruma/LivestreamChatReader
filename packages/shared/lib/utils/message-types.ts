@@ -2,6 +2,15 @@
 
 type BackgroundRequestDataPlaceholder = Record<string, never>;
 
+export type NotificationRequest = {
+  type: 'NOTIFICATION_REQUEST';
+  data: {
+    title: string;
+    message: string;
+    silent?: boolean;
+  };
+};
+
 export type TTSSpeakRequest = {
   type: 'TTS_SPEAK_REQUEST';
   data: {
@@ -42,13 +51,14 @@ export type SetWebDriverShimRequest = {
 };
 
 // Union type for all background messages
-export type BackgroundRequest = TTSSpeakRequest | TTSCancelRequest | SetWebDriverShimRequest;
+export type BackgroundRequest = NotificationRequest | TTSSpeakRequest | TTSCancelRequest | SetWebDriverShimRequest;
 export type BackgroundRequestType = BackgroundRequest['type'];
 export type TTSResponse = TTSSpeakResponse | TTSCancelResponse;
 export type TTSResponseType = TTSResponse['type'];
 
 // Type mapping from Request to corresponding Response
 export type BackgroundRequestResponseMap = {
+  NOTIFICATION_REQUEST: void;
   TTS_SPEAK_REQUEST: TTSSpeakResponse;
   TTS_CANCEL_REQUEST: TTSCancelResponse;
   SET_WEBDRIVER_SHIM_REQUEST: void;

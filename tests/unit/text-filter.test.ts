@@ -127,7 +127,7 @@ describe('Text Filter Functions', () => {
       });
     });
 
-    describe('command filters: end', () => {
+    describe('command filters: mute', () => {
       it('should not work without pattern', () => {
         const filters: TextFilter[] = [
           {
@@ -653,6 +653,66 @@ describe('Text Filter Functions', () => {
         const result2 = applyTextFilters('test message', filters);
         assert.equal(result2, 'テスト message');
       });
+    });
+  });
+
+  describe('command filters: notify', () => {
+    it('should allow subsequent filters to process after notify command', () => {
+      const filters: TextFilter[] = [
+        {
+          id: 1,
+          enabled: true,
+          target: 'output',
+          type: 'command',
+          command: 'notify',
+          pattern: 'important',
+        },
+        {
+          id: 2,
+          enabled: true,
+          target: 'output',
+          type: 'pattern',
+          pattern: 'Hello',
+          replacement: 'Hi',
+        },
+      ];
+
+      const result = applyTextFilters('Hello World!', filters);
+      assert.equal(result, 'Hi World!');
+    });
+
+    it('should return text unchanged when notify command matches', () => {
+      const filters: TextFilter[] = [
+        {
+          id: 1,
+          enabled: true,
+          target: 'output',
+          type: 'command',
+          command: 'notify',
+          pattern: 'Hello',
+        },
+      ];
+
+      const result = applyTextFilters('Hello World!', filters);
+
+      assert.equal(result, 'Hello World!');
+    });
+
+    it('should return text unchanged when notify command does not match', () => {
+      const filters: TextFilter[] = [
+        {
+          id: 1,
+          enabled: true,
+          target: 'output',
+          type: 'command',
+          command: 'notify',
+          pattern: 'Hi',
+        },
+      ];
+
+      const result = applyTextFilters('Hello World!', filters);
+
+      assert.equal(result, 'Hello World!');
     });
   });
 });

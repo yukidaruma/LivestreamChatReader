@@ -219,11 +219,17 @@
   "command": {
     "message": "コマンド"
   },
-  "muteCommand": {
+  "commandDescription": {
     "message": "コマンド: $1 ($2)"
   },
   "commandDescription_mute": {
     "message": "メッセージの読み上げを停止"
+  },
+  "commandDescription_notify": {
+    "message": "通知を表示"
+  },
+  "silentNotification": {
+    "message": "サイレント (通知音なし)"
   },
   "filterTarget": {
     "message": "適用対象"

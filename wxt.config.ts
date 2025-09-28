@@ -32,6 +32,7 @@ export default defineConfig({
       'https://dashboard.twitch.tv/*',
     ],
     permissions: [
+      'notifications',
       'storage',
       'tts', // This permission is required for using TTS without user interaction
     ],

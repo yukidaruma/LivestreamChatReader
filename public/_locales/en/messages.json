@@ -219,11 +219,17 @@
   "command": {
     "message": "Command"
   },
-  "muteCommand": {
+  "commandDescription": {
     "message": "Command: $1 ($2)"
   },
   "commandDescription_mute": {
     "message": "Stop reading the message"
+  },
+  "commandDescription_notify": {
+    "message": "Show notification"
+  },
+  "silentNotification": {
+    "message": "Silent (no notification sound)"
   },
   "filterTarget": {
     "message": "Apply to"

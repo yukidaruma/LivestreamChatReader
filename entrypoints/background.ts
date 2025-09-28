@@ -1,7 +1,13 @@
 import 'webextension-polyfill';
 import { updateIcon, logger } from '@extension/shared';
 import { extensionEnabledStorage } from '@extension/storage';
-import type { BackgroundRequest, TTSSpeakRequest, TTSCancelRequest, InferBackgroundResponse } from '@extension/shared';
+import type {
+  BackgroundRequest,
+  TTSSpeakRequest,
+  TTSCancelRequest,
+  NotificationRequest,
+  InferBackgroundResponse,
+} from '@extension/shared';
 
 type SendResponseFunction<T extends BackgroundRequest> = (response: InferBackgroundResponse<T>) => void;
 type BackgroundRequestHandler<T extends BackgroundRequest> = (
@@ -83,6 +89,23 @@ const handleTTSCancel: BackgroundRequestHandler<TTSCancelRequest> = (_request, s
   });
 };
 
+const showNotification: BackgroundRequestHandler<NotificationRequest> = async (request, _sendResponse) => {
+  const { title, message, silent } = request.data;
+
+  try {
+    await browser.notifications.create({
+      type: 'basic',
+      iconUrl: '/icons/128.png',
+      title,
+      message,
+      silent,
+    });
+    logger.debug(`Notification shown: ${title} - ${message}${silent ? ' (silent)' : ''}`);
+  } catch (error) {
+    logger.error('Failed to show notification:', error);
+  }
+};
+
 const setWebDriverShim = () => {
   browser.tts.speak = function (_utterance: string, options?: Browser.tts.TtsOptions) {
     // It is necessary to resolve the promise returned. The extension's
@@ -123,6 +146,10 @@ export default defineBackground(() => {
       logger.debug('Background received message:', message.type, message.data);
 
       switch (message.type) {
+        case 'NOTIFICATION_REQUEST':
+          showNotification(message, sendResponse);
+          return false;
+
         case 'TTS_SPEAK_REQUEST':
           handleTTSSpeak(message, sendResponse);
           return true;

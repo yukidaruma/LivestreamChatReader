@@ -1,27 +1,47 @@
+import { showNotification } from './text-to-speech';
 import type { logger as loggerType } from './logger';
 import type { CommandFilter, TextFilter } from '@extension/storage';
 
 /** @returns Command result; null if the speech should be terminated */
-const executeCommand = (text: string, filter: CommandFilter, logger?: typeof loggerType): string | null => {
+const executeCommand = (
+  text: string,
+  filter: CommandFilter,
+  { message, logger }: { message?: Record<string, string>; logger?: typeof loggerType },
+): string | null => {
   switch (filter.command) {
     case 'mute': {
       if (filter.pattern) {
-        try {
-          const regex = new RegExp(filter.isRegex ? filter.pattern : RegExp.escape(filter.pattern), 'i');
-          const match = regex.test(text);
-          const isNot = !!filter.options?.isNot;
-          if (match !== isNot) {
-            return null;
-          }
-        } catch (error) {
-          logger?.warn(`Invalid pattern in mute command: ${filter.pattern}`, error);
+        const regex = new RegExp(filter.isRegex ? filter.pattern : RegExp.escape(filter.pattern), 'i');
+        const match = regex.test(text);
+        const isNot = !!filter.options?.isNot;
+        if (match !== isNot) {
+          return null;
         }
       }
 
       // When regex error occured or pattern didn't match, continue filtering
       return text;
     }
+    case 'notify': {
+      let shouldNotify = true;
+
+      if (filter.pattern) {
+        const regex = new RegExp(filter.isRegex ? filter.pattern : RegExp.escape(filter.pattern), 'i');
+        const match = regex.test(text);
+        const isNot = !!filter.options?.isNot;
+        shouldNotify = match !== isNot;
+      }
+
+      if (shouldNotify) {
+        if (message) {
+          showNotification(message.name, message.body, filter.options?.silent);
+        }
+      }
+
+      return text;
+    }
     default:
+      // @ts-expect-error exhaustive
       logger?.warn(`Unknown command: ${filter.command}`);
       return text;
   }
@@ -31,7 +51,11 @@ const executeCommand = (text: string, filter: CommandFilter, logger?: typeof log
 export const applyTextFilters = (
   text: string,
   filters: TextFilter[],
-  { fieldName, logger }: { fieldName?: string; logger?: typeof loggerType } = {},
+  {
+    fieldName,
+    logger,
+    message,
+  }: { fieldName?: string; logger?: typeof loggerType; message?: Record<string, string> } = {},
 ): string | null => {
   let result = text;
 
@@ -54,7 +78,7 @@ export const applyTextFilters = (
         break;
       }
       case 'command': {
-        const commandResult = executeCommand(result, filter, logger);
+        const commandResult = executeCommand(result, filter, { logger, message });
         if (commandResult === null) {
           return null;
         }

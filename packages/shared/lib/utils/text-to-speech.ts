@@ -7,7 +7,17 @@ const languageDetector = self.LanguageDetector?.create();
 // Helper function to generate unique request ID (non-cryptographically secure)
 const generateRequestId = (): string => `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
 
-// Helper function to send TTS messages to background script via `browser.runtime.sendMessage`
+const showNotification = (title: string, message: string, silent?: boolean): void => {
+  sendTTSMessage({
+    type: 'NOTIFICATION_REQUEST',
+    data: {
+      title,
+      message,
+      silent,
+    },
+  });
+};
+
 const sendTTSMessage = <T extends BackgroundRequest>(message: T): Promise<InferBackgroundResponse<T>> =>
   browser.runtime.sendMessage<T, InferBackgroundResponse<T>>(message);
 
@@ -72,7 +82,7 @@ type CancellableSpeech = {
   cancel: () => Promise<void>;
 };
 
-export const speakText = (
+const speakText = (
   text: string,
   { logger, bodyText }: { logger?: typeof loggerType; bodyText?: string } = {},
 ): CancellableSpeech => {
@@ -184,8 +194,10 @@ export const speakText = (
   return { promise, cancel };
 };
 
-export const initWebDriverShim = async () => {
+const initWebDriverShim = async () => {
   await sendTTSMessage({
     type: 'SET_WEBDRIVER_SHIM_REQUEST',
   });
 };
+
+export { speakText, showNotification, initWebDriverShim };

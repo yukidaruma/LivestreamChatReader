@@ -355,6 +355,7 @@ const FilterRuleDialog = ({ isOpen, onClose, onSave, initialFilter }: FilterRule
   const [isRegex, setIsRegex] = useState(false);
   const [command, setCommand] = useState<FilterCommandName>('mute');
   const [conditionNot, setConditionNot] = useState(false);
+  const [notifySilent, setNotifySilent] = useState(false);
   const [regexError, setRegexError] = useState<string | null>(null);
 
   // Initialize form with initial filter data
@@ -374,6 +375,9 @@ const FilterRuleDialog = ({ isOpen, onClose, onSave, initialFilter }: FilterRule
     if (values.type === 'command') {
       setCommand(values.command);
       setConditionNot(values.options?.isNot ?? false);
+      if (values.command === 'notify') {
+        setNotifySilent(values.options?.silent ?? false);
+      }
     }
     setRegexError(null);
   }, [isOpen, initialFilter]);
@@ -403,11 +407,17 @@ const FilterRuleDialog = ({ isOpen, onClose, onSave, initialFilter }: FilterRule
   const handleFilterTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
 
-    setFilterType(value as TextFilter['type']);
-    if (value === 'command') {
-      const selectedOption = e.target.selectedOptions[0];
-      const commandType = selectedOption.getAttribute('data-command') as FilterCommandName;
+    if (value === 'pattern') {
+      setFilterType('pattern');
+    } else if (value.startsWith('command:')) {
+      setFilterType('command');
+      const commandType = value.split(':')[1] as FilterCommandName;
       setCommand(commandType);
+
+      // Reset command-specific options
+      if (commandType === 'notify') {
+        setNotifySilent(false);
+      }
     }
   };
 
@@ -425,7 +435,11 @@ const FilterRuleDialog = ({ isOpen, onClose, onSave, initialFilter }: FilterRule
       ...(filterType === 'command' && {
         command,
         options: {
-          isNot: conditionNot,
+          ...(command === 'mute' && { isNot: conditionNot }),
+          ...(command === 'notify' && {
+            isNot: conditionNot,
+            silent: notifySilent,
+          }),
         },
       }),
     } as TextFilterWithoutId;
@@ -438,10 +452,14 @@ const FilterRuleDialog = ({ isOpen, onClose, onSave, initialFilter }: FilterRule
       <div className="input-full space-y-4 text-sm">
         <label className="block">
           <span className="mb-2 block font-medium">{t('filterType')}</span>
-          <select value={filterType} onChange={handleFilterTypeChange} className="rounded border border-gray-300">
+          <select
+            value={filterType === 'command' ? `command:${command}` : filterType}
+            onChange={handleFilterTypeChange}
+            className="rounded border border-gray-300">
             <option value="pattern">{t('textPattern')}</option>
-            <option value="command" data-command="mute">
-              {t('muteCommand', ['mute', t('commandDescription_mute')])}
+            <option value="command:mute">{t('commandDescription', ['mute', t('commandDescription_mute')])}</option>
+            <option value="command:notify">
+              {t('commandDescription', ['notify', t('commandDescription_notify')])}
             </option>
           </select>
         </label>
@@ -508,15 +526,27 @@ const FilterRuleDialog = ({ isOpen, onClose, onSave, initialFilter }: FilterRule
           </label>
         )}
 
-        {filterType === 'command' && command === 'mute' && (
-          <div>
-            <LabeledToggleButton
-              checked={conditionNot}
-              onChange={() => setConditionNot(prev => !prev)}
-              description={t('invertFilterPattern')}
-              srOnlyLabel={conditionNot ? t('enabled') : t('disabled')}
-            />
-          </div>
+        {filterType === 'command' && (
+          <>
+            <div>
+              <LabeledToggleButton
+                checked={conditionNot}
+                onChange={() => setConditionNot(prev => !prev)}
+                description={t('invertFilterPattern')}
+                srOnlyLabel={conditionNot ? t('enabled') : t('disabled')}
+              />
+            </div>
+            {command === 'notify' && (
+              <div>
+                <LabeledToggleButton
+                  checked={notifySilent}
+                  onChange={() => setNotifySilent(prev => !prev)}
+                  description={t('silentNotification')}
+                  srOnlyLabel={notifySilent ? t('enabled') : t('disabled')}
+                />
+              </div>
+            )}
+          </>
         )}
 
         <div className="flex justify-end space-x-3">

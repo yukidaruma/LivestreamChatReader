@@ -1,4 +1,5 @@
 import { findSiteConfigByUrl } from '../../packages/shared/lib/utils/site-config';
+import { describe, it } from 'bun:test';
 import { strict as assert } from 'assert';
 
 describe('Site Configuration', () => {
@@ -31,7 +32,7 @@ describe('Site Configuration', () => {
     });
 
     it('should find YouTube config for chat-test.html inside chrome-extension', () => {
-      const config = findSiteConfigByUrl('chrome-extension://abc123/options/chat-test.html');
+      const config = findSiteConfigByUrl('chrome-extension://abc123/options.html#chat-test');
       assert.ok(config);
       assert.equal(config.name, 'YouTube Live Chat');
     });

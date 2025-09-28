@@ -106,23 +106,23 @@ const BaseTextFilterSchema = z.object({
   options: z.unknown().optional(),
 });
 
+const regexValidation = (data: { isRegex?: boolean; pattern?: string }) => {
+  if (data.isRegex && data.pattern) {
+    return validateRegex(data.pattern) === null;
+  }
+  return true;
+};
+const regexValidationOptions = {
+  message: 'Invalid regular expression pattern',
+  path: ['pattern'],
+};
+
 const PatternFilterSchema = BaseTextFilterSchema.extend({
   type: z.literal('pattern'),
   isRegex: z.boolean().optional(),
   pattern: z.string(),
   replacement: z.string(),
-}).refine(
-  data => {
-    if (data.isRegex && data.pattern) {
-      return validateRegex(data.pattern) === null;
-    }
-    return true;
-  },
-  {
-    message: 'Invalid regular expression pattern',
-    path: ['pattern'],
-  },
-);
+}).refine(regexValidation, regexValidationOptions);
 
 const MuteCommandFilterSchema = BaseTextFilterSchema.extend({
   type: z.literal('command'),
@@ -134,20 +134,24 @@ const MuteCommandFilterSchema = BaseTextFilterSchema.extend({
       isNot: z.boolean().optional(),
     })
     .optional(),
-}).refine(
-  data => {
-    if (data.isRegex && data.pattern) {
-      return validateRegex(data.pattern) === null;
-    }
-    return true;
-  },
-  {
-    message: 'Invalid regular expression pattern',
-    path: ['pattern'],
-  },
-);
+}).refine(regexValidation, regexValidationOptions);
 
-export const TextFilterSchema = z.discriminatedUnion('type', [PatternFilterSchema, MuteCommandFilterSchema]);
+const NotifyCommandFilterSchema = BaseTextFilterSchema.extend({
+  type: z.literal('command'),
+  command: z.literal('notify'),
+  isRegex: z.boolean().optional(),
+  pattern: z.string().optional(),
+  options: z
+    .object({
+      isNot: z.boolean().optional(),
+      silent: z.boolean().optional(),
+    })
+    .optional(),
+}).refine(regexValidation, regexValidationOptions);
+
+const CommandFilterSchema = z.discriminatedUnion('command', [MuteCommandFilterSchema, NotifyCommandFilterSchema]);
+
+export const TextFilterSchema = z.discriminatedUnion('type', [PatternFilterSchema, CommandFilterSchema]);
 
 // Array schema for validating collections of filters
 export const TextFiltersArraySchema = z.array(TextFilterSchema).refine(
@@ -168,7 +172,8 @@ export const TextFiltersArraySchema = z.array(TextFilterSchema).refine(
 export type BaseTextFilter = z.infer<typeof BaseTextFilterSchema>;
 export type PatternFilter = z.infer<typeof PatternFilterSchema>;
 export type MuteCommandFilter = z.infer<typeof MuteCommandFilterSchema>;
-export type CommandFilter = MuteCommandFilter;
+export type NotifyCommandFilter = z.infer<typeof NotifyCommandFilterSchema>;
+export type CommandFilter = MuteCommandFilter | NotifyCommandFilter;
 export type FilterCommandName = CommandFilter['command'];
 export type TextFilter = z.infer<typeof TextFilterSchema>;
 

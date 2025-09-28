@@ -68,7 +68,7 @@ const createMonitor =
         const fieldFilters = cachedValues.filters.filter(
           f => f.enabled && f.target === 'field' && f.fieldName === fieldName,
         );
-        const result = applyTextFilters(fieldValue, fieldFilters, { fieldName, logger });
+        const result = applyTextFilters(fieldValue, fieldFilters, { fieldName, logger, message: fieldValues });
         if (result === null) {
           return null;
         }
@@ -80,7 +80,7 @@ const createMonitor =
 
       // Apply output-level filters
       const outputFilters = cachedValues.filters.filter(f => f.enabled && f.target === 'output');
-      const filteredText = applyTextFilters(formattedText, outputFilters, { logger });
+      const filteredText = applyTextFilters(formattedText, outputFilters, { logger, message: fieldValues });
       if (filteredText === null) {
         return null;
       }
