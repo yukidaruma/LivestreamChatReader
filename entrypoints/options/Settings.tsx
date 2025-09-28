@@ -27,7 +27,7 @@ const Settings = () => {
   const { rate: storedRate } = useStorage(ttsRateStorage);
   const { template: speechTemplate } = useStorage(speechTemplateStorage);
   const { volume: storedVolume } = useStorage(ttsVolumeStorage);
-  const { uri: voiceURI } = useStorage(ttsVoiceEngineStorage);
+  const { uri: voiceURI, languageDetectionEnabled } = useStorage(ttsVoiceEngineStorage);
 
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [localRate, setLocalRate] = useState(storedRate);
@@ -73,6 +73,16 @@ const Settings = () => {
   const handleVoiceEngineChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
     ttsVoiceEngineStorage.setUri(value === '' ? null : value);
+  };
+
+  const handleLanguageDetectionChange = () => {
+    LanguageDetector?.availability().then(languageDetectorAvailability => {
+      if (languageDetectorAvailability === 'downloadable') {
+        LanguageDetector?.create(); // Trigger model download
+      }
+
+      ttsVoiceEngineStorage.toggleLanguageDetection();
+    });
   };
 
   const startVoiceTest = () => {
@@ -179,11 +189,14 @@ const Settings = () => {
         <div>
           <h2>{t('voiceEngine')}</h2>
           <div className="flex items-center space-x-2">
-            <select value={voiceURI ?? ''} onChange={handleVoiceEngineChange} disabled={isTestingVoice}>
+            <select
+              value={languageDetectionEnabled ? '' : (voiceURI ?? '')}
+              onChange={handleVoiceEngineChange}
+              disabled={isTestingVoice || languageDetectionEnabled}>
               {voices.length > 0 ? (
                 <>
-                  <option value="" selected={voiceURI === null}>
-                    {t('noVoiceSelected')}
+                  <option value="">
+                    {languageDetectionEnabled ? t('automaticVoiceSelection') : t('noVoiceSelected')}
                   </option>
                   {voices.map(voice => (
                     <option key={voice.voiceURI} value={voice.voiceURI}>
@@ -197,9 +210,19 @@ const Settings = () => {
                 </option>
               )}
             </select>
-            <button className="text-sm" onClick={isTestingVoice ? cancelVoiceTest : startVoiceTest} disabled={!enabled}>
+            <button
+              className="text-sm"
+              onClick={isTestingVoice ? cancelVoiceTest : startVoiceTest}
+              disabled={!enabled || languageDetectionEnabled}>
               {isTestingVoice ? t('cancel') : t('testVoice')}
             </button>
+          </div>
+          <div className="mt-4">
+            <LabeledToggleButton
+              checked={languageDetectionEnabled}
+              onChange={handleLanguageDetectionChange}
+              description={t('languageDetectionDescription')}
+            />
           </div>
         </div>
         <div>

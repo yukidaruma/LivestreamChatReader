@@ -98,7 +98,7 @@ const createMonitor =
       };
     };
 
-    const messageQueue: string[] = [];
+    const messageQueue: MessageData[] = [];
     let isProcessing = false;
     let cancelSpeech: (() => void) | null = null;
 
@@ -117,9 +117,9 @@ const createMonitor =
 
       while (enabled && messageQueue.length > 0) {
         const message = messageQueue.shift()!;
-        logger.debug(`Start speech: "${message}"`);
+        logger.debug(`Start speech: "${message.text}"`);
 
-        const { promise, cancel } = speakText(message, { logger });
+        const { promise, cancel } = speakText(message.text, { logger, bodyText: message.filteredFieldValues.body });
         cancelSpeech = cancel;
 
         const unsubscribe = extensionEnabledStorage.subscribe(() => {
@@ -138,11 +138,11 @@ const createMonitor =
         try {
           const speechResult = await promise;
           if (speechResult) {
-            logger.debug(`Finished speech: "${message}"`);
+            logger.debug(`Finished speech: "${message.text}"`);
           }
         } catch (error: unknown) {
           if (error instanceof Error) {
-            logger.error(`Error during speech: "${message}": ${error.message}`);
+            logger.error(`Error during speech: "${message.text}": ${error.message}`);
           }
         } finally {
           cancelSpeech = null;
@@ -153,8 +153,8 @@ const createMonitor =
       isProcessing = false;
     };
 
-    const queueMessage = (message: string) => {
-      logger.debug(`Adding message to queue: "${message}"`);
+    const queueMessage = (message: MessageData) => {
+      logger.debug(`Adding message to queue: "${message.text}"`);
       messageQueue.push(message);
       processQueue();
     };
@@ -203,7 +203,7 @@ const createMonitor =
                 // Duplicate message check for Twitch chat
                 if (message.serialized !== lastMessage) {
                   lastMessage = message.serialized;
-                  queueMessage(message.text);
+                  queueMessage(message);
                 }
               }
             }

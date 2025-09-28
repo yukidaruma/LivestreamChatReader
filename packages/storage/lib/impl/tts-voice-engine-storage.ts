@@ -4,6 +4,7 @@ import type { TtsVoiceEngineStateType, TtsVoiceEngineStorageType } from '../base
 const storage = createStorage<TtsVoiceEngineStateType>(
   'tts-voice-engine-key',
   {
+    languageDetectionEnabled: false,
     uri: null,
   },
   {
@@ -14,7 +15,16 @@ const storage = createStorage<TtsVoiceEngineStateType>(
 
 export const ttsVoiceEngineStorage: TtsVoiceEngineStorageType = {
   ...storage,
+  toggleLanguageDetection: async () => {
+    await storage.set(currentState => ({
+      ...currentState,
+      languageDetectionEnabled: !currentState.languageDetectionEnabled,
+    }));
+  },
   setUri: async uri => {
-    await storage.set({ uri });
+    await storage.set(currentState => ({
+      ...currentState,
+      uri,
+    }));
   },
 };

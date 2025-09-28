@@ -246,6 +246,12 @@
   "jsonSyntaxError": {
     "message": "JSON syntax error: $1"
   },
+  "languageDetectionDescription": {
+    "message": "Detect language and use voice of its language (Requires Chrome 138+)"
+  },
+  "automaticVoiceSelection": {
+    "message": "(Selected automatically)"
+  },
   "extensionDisabledTestMessage": {
     "message": "Extension is disabled. Enable the extension to test the chat text-to-speech functionality."
   },

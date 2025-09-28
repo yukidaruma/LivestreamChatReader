@@ -194,9 +194,11 @@ export type SpeechTemplateStorageType = BaseStorageType<SpeechTemplateStateType>
 // tts-voice-engine-storage.ts
 export type TtsVoiceEngineStateType = {
   uri: string | null; // Voice URI like "Microsoft Ayumi - Japanese (Japan)" or "Google 日本語"
+  languageDetectionEnabled: boolean;
 };
 export type TtsVoiceEngineStorageType = BaseStorageType<TtsVoiceEngineStateType> & {
   setUri: (uri: string | null) => Promise<void>;
+  toggleLanguageDetection: () => Promise<void>;
 };
 
 // theme-storage.ts

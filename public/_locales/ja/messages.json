@@ -246,6 +246,12 @@
   "jsonSyntaxError": {
     "message": "JSON構文エラー: $1"
   },
+  "languageDetectionDescription": {
+    "message": "言語を検出して自動で音声を選択する (Chrome 138+)"
+  },
+  "automaticVoiceSelection": {
+    "message": "(自動で選択されます)"
+  },
   "extensionDisabledTestMessage": {
     "message": "拡張機能が無効です。チャット音声読み上げ機能をテストするには拡張機能を有効にしてください。"
   },
