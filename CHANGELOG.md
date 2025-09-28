@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.0 (2025-09-28)
+### Added
+- Add "notify" filter command
+- Add "Detect language" setting
+- Add ability to edit filters as raw data
+
 ## 2.2.0 (2025-09-23)
 ### Added
 - Add keyboard shortcut to enable/disable extension
