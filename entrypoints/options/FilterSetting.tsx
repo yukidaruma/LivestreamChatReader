@@ -467,25 +467,21 @@ const FilterRuleDialog = ({ isOpen, onClose, onSave, initialFilter }: FilterRule
         <label className="block">
           <span className="mb-2 block font-medium">{t('filterTarget')}</span>
           <select
-            value={target === 'field' ? 'field' : target}
+            value={target === 'field' ? `field:${fieldName}` : target}
             onChange={e => {
-              const value = e.target.value as TextFilter['target'];
+              const value = e.target.value;
 
-              setTarget(value);
-              if (value === 'field') {
-                const selectedOption = e.target.selectedOptions[0];
-                const fieldType = selectedOption.getAttribute('data-field')!;
-                setFieldName(fieldType);
+              if (value.startsWith('field:')) {
+                setTarget('field');
+                setFieldName(value.slice('field:'.length));
+              } else {
+                setTarget(value as TextFilter['target']);
               }
             }}
             className="rounded border border-gray-300">
             <option value="output">{t('targetOutput')}</option>
-            <option value="field" data-field="name">
-              {t('name')}
-            </option>
-            <option value="field" data-field="body">
-              {t('body')}
-            </option>
+            <option value="field:name">{t('name')}</option>
+            <option value="field:body">{t('body')}</option>
           </select>
         </label>
 
