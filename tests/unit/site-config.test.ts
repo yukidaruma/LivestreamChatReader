@@ -1,6 +1,6 @@
 import { findSiteConfigByUrl } from '../../packages/shared/lib/utils/site-config';
-import { describe, it } from 'bun:test';
 import { strict as assert } from 'assert';
+import { describe, it } from 'bun:test';
 
 describe('Site Configuration', () => {
   describe('findSiteConfigByUrl', () => {

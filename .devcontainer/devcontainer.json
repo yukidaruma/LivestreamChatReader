@@ -10,16 +10,27 @@
       "source": "${localWorkspaceFolder}",
       "target": "/workspace/app",
       "type": "bind"
+    },
+    {
+      "source": "${env:HOME}/.claude.json",
+      "target": "/home/user/.claude.json",
+      "type": "bind"
+    },
+    {
+      "source": "${env:HOME}/.claude",
+      "target": "/home/user/.claude",
+      "type": "bind"
     }
   ],
   "customizations": {
     "vscode": {
-      "extensions": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint", "bradlc.vscode-tailwindcss"]
+      "extensions": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint", "bradlc.vscode-tailwindcss", "eamodio.gitlens"]
     }
   },
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
   },
   "postCreateCommand": "bun install",
   "remoteUser": "ubuntu",

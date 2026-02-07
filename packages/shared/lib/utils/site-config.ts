@@ -8,6 +8,10 @@ export type SiteConfig = {
   loadDetectionSelector?: string;
   messageSelector: string;
   fields: FieldExtractor[];
+  emoji?: {
+    selector: string;
+    nameAttribute: string;
+  };
   pollingInterval?: number;
 };
 export type SiteId = (typeof siteConfigs)[number]['id'];
@@ -19,6 +23,10 @@ export const siteConfigs = [
     urlPatterns: ['https://www.youtube.com/live_chat', 'https://studio.youtube.com/live_chat'],
     containerSelector: '#items',
     messageSelector: 'yt-live-chat-text-message-renderer',
+    emoji: {
+      selector: 'img.emoji',
+      nameAttribute: 'shared-tooltip-text',
+    },
     fields: [
       { name: 'name', selector: '#author-name' },
       { name: 'body', selector: '#message' },
@@ -31,6 +39,10 @@ export const siteConfigs = [
     containerSelector: '.chat-scrollable-area__message-container',
     loadDetectionSelector: '[data-a-target="chat-welcome-message"]',
     messageSelector: '.chat-line__message-container',
+    emoji: {
+      selector: 'img.chat-line__message--emote',
+      nameAttribute: 'alt',
+    },
     fields: [
       { name: 'name', selector: '.chat-author__display-name' },
       { name: 'body', selector: '[data-a-target="chat-line-message-body"]' },

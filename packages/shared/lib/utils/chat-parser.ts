@@ -1,3 +1,5 @@
+import type { SiteConfig } from './site-config';
+
 export const DEFAULT_SPEECH_TEMPLATE = '%(name) %(body)';
 
 export type FieldExtractor = {
@@ -6,10 +8,38 @@ export type FieldExtractor = {
   attribute?: string;
   defaultValue?: string;
 };
-export const extractFieldValues = (element: Element, fields: FieldExtractor[]): Record<string, string> => {
+
+// Recursively walks child nodes to extract text, replacing emoji <img> elements with their names.
+export const extractTextContent = (element: Element, emoji?: SiteConfig['emoji']): string => {
+  if (!emoji) {
+    return element.textContent ?? '';
+  }
+
+  const parts: string[] = [];
+  for (const node of element.childNodes) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      parts.push(node.textContent ?? '');
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const el = node as Element;
+      if (el.matches(emoji.selector)) {
+        const emojiName = el.getAttribute(emoji.nameAttribute);
+        if (emojiName) {
+          // Wrap Twitch emote in ':' for normalization (PogChamp -> :PogChamp:)
+          parts.push(emojiName.startsWith(':') ? emojiName : `:${emojiName}:`);
+        }
+      } else {
+        parts.push(extractTextContent(el, emoji));
+      }
+    }
+  }
+
+  return parts.join('');
+};
+
+export const extractFieldValues = (element: Element, config: SiteConfig): Record<string, string> => {
   const result: Record<string, string> = {};
 
-  for (const field of fields) {
+  for (const field of config.fields) {
     let value: string | null = null;
 
     if (field.selector) {
@@ -17,8 +47,9 @@ export const extractFieldValues = (element: Element, fields: FieldExtractor[]): 
       if (targetElement) {
         if (field.attribute) {
           value = targetElement.getAttribute(field.attribute);
-        } else if (targetElement.textContent) {
-          value = targetElement.textContent.trim();
+        } else {
+          const text = extractTextContent(targetElement, config.emoji);
+          value = text.trim() || null;
         }
       }
     }

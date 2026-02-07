@@ -57,7 +57,7 @@ const createMonitor =
       text: string;
     };
     const extractMessageData = (element: Element): MessageData | null => {
-      const fieldValues = extractFieldValues(element, config.fields);
+      const fieldValues = extractFieldValues(element, config);
       const hasContent = Object.values(fieldValues).some(value => value !== '');
       if (!hasContent) return null;
 

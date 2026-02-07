@@ -1,6 +1,21 @@
-import { extractFieldValues, formatText, normalizeWhitespaces } from '@extension/shared/lib/utils/chat-parser';
+import {
+  extractFieldValues,
+  extractTextContent,
+  formatText,
+  normalizeWhitespaces,
+} from '@extension/shared/lib/utils/chat-parser';
 import { strict as assert } from 'assert';
 import type { FieldExtractor } from '@extension/shared/lib/utils/chat-parser';
+import type { SiteConfig } from '@extension/shared/lib/utils/site-config';
+
+const makeSiteConfig = (fields: FieldExtractor[], emoji?: SiteConfig['emoji']): SiteConfig => ({
+  id: 'test',
+  name: 'Test',
+  urlPatterns: [],
+  messageSelector: '',
+  fields,
+  emoji,
+});
 
 describe('Text-to-Speech Utility Functions', () => {
   describe('extractFieldValues', () => {
@@ -8,19 +23,19 @@ describe('Text-to-Speech Utility Functions', () => {
       const mockElement = {
         querySelector: (selector: string) => {
           const mockElements: Record<string, any> = {
-            '#author-name': { textContent: 'Donut' },
-            '#message': { textContent: 'Hi' },
+            '#author-name': { textContent: 'Donut', childNodes: [{ nodeType: 3, textContent: 'Donut' }] },
+            '#message': { textContent: 'Hi', childNodes: [{ nodeType: 3, textContent: 'Hi' }] },
           };
           return mockElements[selector];
         },
       } as Element;
 
-      const fields: FieldExtractor[] = [
+      const config = makeSiteConfig([
         { name: 'name', selector: '#author-name' },
         { name: 'body', selector: '#message' },
-      ];
+      ]);
 
-      const result = extractFieldValues(mockElement, fields);
+      const result = extractFieldValues(mockElement, config);
       assert.deepEqual(result, { name: 'Donut', body: 'Hi' });
     });
 
@@ -36,9 +51,9 @@ describe('Text-to-Speech Utility Functions', () => {
         },
       } as Element;
 
-      const fields: FieldExtractor[] = [{ name: 'userId', selector: '.user', attribute: 'data-id' }];
+      const config = makeSiteConfig([{ name: 'userId', selector: '.user', attribute: 'data-id' }]);
 
-      const result = extractFieldValues(mockElement, fields);
+      const result = extractFieldValues(mockElement, config);
       assert.deepEqual(result, { userId: '123' });
     });
 
@@ -47,9 +62,9 @@ describe('Text-to-Speech Utility Functions', () => {
         querySelector: (_selector: string) => null,
       } as Element;
 
-      const fields: FieldExtractor[] = [{ name: 'name', selector: '.missing', defaultValue: 'Anonymous' }];
+      const config = makeSiteConfig([{ name: 'name', selector: '.missing', defaultValue: 'Anonymous' }]);
 
-      const result = extractFieldValues(mockElement, fields);
+      const result = extractFieldValues(mockElement, config);
       assert.deepEqual(result, { name: 'Anonymous' });
     });
 
@@ -57,15 +72,15 @@ describe('Text-to-Speech Utility Functions', () => {
       const mockElement = {
         querySelector: (selector: string) => {
           if (selector === '.empty') {
-            return { textContent: '   ' }; // Only whitespace
+            return { textContent: '   ', childNodes: [{ nodeType: 3, textContent: '   ' }] };
           }
           return null;
         },
       } as Element;
 
-      const fields: FieldExtractor[] = [{ name: 'content', selector: '.empty' }];
+      const config = makeSiteConfig([{ name: 'content', selector: '.empty' }]);
 
-      const result = extractFieldValues(mockElement, fields);
+      const result = extractFieldValues(mockElement, config);
       assert.deepEqual(result, { content: '' }); // Should be trimmed to empty string
     });
 
@@ -73,20 +88,177 @@ describe('Text-to-Speech Utility Functions', () => {
       const mockElement = {
         querySelector: (selector: string) => {
           const mockElements: Record<string, any> = {
-            '#author-name': { textContent: 'Donut' },
-            '#message': { textContent: 'Great stream!' },
+            '#author-name': {
+              textContent: 'Donut',
+              childNodes: [{ nodeType: 3, textContent: 'Donut' }],
+            },
+            '#message': {
+              textContent: 'Great stream!',
+              childNodes: [{ nodeType: 3, textContent: 'Great stream!' }],
+            },
           };
           return mockElements[selector];
         },
       } as Element;
 
-      const fields: FieldExtractor[] = [
+      const config = makeSiteConfig([
         { name: 'name', selector: '#author-name' },
         { name: 'body', selector: '#message' },
-      ];
+      ]);
 
-      const result = extractFieldValues(mockElement, fields);
+      const result = extractFieldValues(mockElement, config);
       assert.deepEqual(result, { name: 'Donut', body: 'Great stream!' });
+    });
+
+    it('should extract emoji names from img elements when emoji config is provided', () => {
+      const emojiImg = {
+        nodeType: 1,
+        matches: (sel: string) => sel === 'img.emoji',
+        getAttribute: (attr: string) => (attr === 'shared-tooltip-text' ? ':thumbsup:' : null),
+        childNodes: [],
+      };
+
+      const messageEl = {
+        textContent: 'Hello ',
+        childNodes: [{ nodeType: 3, textContent: 'Hello ' }, emojiImg, { nodeType: 3, textContent: ' world' }],
+      };
+
+      const mockElement = {
+        querySelector: (selector: string) => {
+          if (selector === '#message') return messageEl;
+          if (selector === '#author-name')
+            return { textContent: 'User', childNodes: [{ nodeType: 3, textContent: 'User' }] };
+          return null;
+        },
+      } as Element;
+
+      const config = makeSiteConfig(
+        [
+          { name: 'name', selector: '#author-name' },
+          { name: 'body', selector: '#message' },
+        ],
+        { selector: 'img.emoji', nameAttribute: 'shared-tooltip-text' },
+      );
+
+      const result = extractFieldValues(mockElement, config);
+      assert.deepEqual(result, { name: 'User', body: 'Hello :thumbsup: world' });
+    });
+
+    it('should extract emoji with Twitch-style alt attribute', () => {
+      const emojiImg = {
+        nodeType: 1,
+        matches: (sel: string) => sel === 'img.chat-line__message--emote',
+        getAttribute: (attr: string) => (attr === 'alt' ? 'Kappa' : null),
+        childNodes: [],
+      };
+
+      const messageEl = {
+        textContent: '',
+        childNodes: [emojiImg],
+      };
+
+      const mockElement = {
+        querySelector: (selector: string) => {
+          if (selector === '[data-a-target="chat-line-message-body"]') return messageEl;
+          if (selector === '.chat-author__display-name')
+            return { textContent: 'Viewer', childNodes: [{ nodeType: 3, textContent: 'Viewer' }] };
+          return null;
+        },
+      } as Element;
+
+      const config = makeSiteConfig(
+        [
+          { name: 'name', selector: '.chat-author__display-name' },
+          { name: 'body', selector: '[data-a-target="chat-line-message-body"]' },
+        ],
+        { selector: 'img.chat-line__message--emote', nameAttribute: 'alt' },
+      );
+
+      const result = extractFieldValues(mockElement, config);
+      assert.deepEqual(result, { name: 'Viewer', body: 'Kappa' });
+    });
+
+    it('should fall back to textContent without emoji config', () => {
+      const mockElement = {
+        querySelector: (selector: string) => {
+          if (selector === '#message') {
+            return { textContent: 'plain text', childNodes: [{ nodeType: 3, textContent: 'plain text' }] };
+          }
+          return null;
+        },
+      } as Element;
+
+      const config = makeSiteConfig([{ name: 'body', selector: '#message' }]);
+
+      const result = extractFieldValues(mockElement, config);
+      assert.deepEqual(result, { body: 'plain text' });
+    });
+  });
+
+  describe('extractTextContent', () => {
+    it('should return textContent when no emoji config is provided', () => {
+      const element = { textContent: 'Hello world' } as Element;
+      assert.equal(extractTextContent(element), 'Hello world');
+    });
+
+    it('should return textContent for null textContent when no emoji config', () => {
+      const element = { textContent: null } as Element;
+      assert.equal(extractTextContent(element), '');
+    });
+
+    it('should extract text from mixed text and emoji nodes', () => {
+      const element = {
+        childNodes: [
+          { nodeType: 3, textContent: 'Hello ' },
+          {
+            nodeType: 1,
+            matches: (sel: string) => sel === 'img.emoji',
+            getAttribute: (attr: string) => (attr === 'alt' ? ':wave:' : null),
+            childNodes: [],
+          },
+          { nodeType: 3, textContent: ' there' },
+        ],
+      } as unknown as Element;
+
+      assert.equal(extractTextContent(element, { selector: 'img.emoji', nameAttribute: 'alt' }), 'Hello :wave: there');
+    });
+
+    it('should recurse into non-emoji element nodes', () => {
+      const element = {
+        childNodes: [
+          {
+            nodeType: 1,
+            matches: (_sel: string) => false,
+            childNodes: [
+              { nodeType: 3, textContent: 'nested ' },
+              {
+                nodeType: 1,
+                matches: (sel: string) => sel === 'img.emoji',
+                getAttribute: (attr: string) => (attr === 'alt' ? ':smile:' : null),
+                childNodes: [],
+              },
+            ],
+          },
+        ],
+      } as unknown as Element;
+
+      assert.equal(extractTextContent(element, { selector: 'img.emoji', nameAttribute: 'alt' }), 'nested :smile:');
+    });
+
+    it('should handle emoji with missing attribute gracefully', () => {
+      const element = {
+        childNodes: [
+          { nodeType: 3, textContent: 'Hi ' },
+          {
+            nodeType: 1,
+            matches: (sel: string) => sel === 'img.emoji',
+            getAttribute: (_attr: string) => null,
+            childNodes: [],
+          },
+        ],
+      } as unknown as Element;
+
+      assert.equal(extractTextContent(element, { selector: 'img.emoji', nameAttribute: 'alt' }), 'Hi ');
     });
   });
 
