@@ -340,7 +340,7 @@ const FilterSetting = () => {
             {FILTER_PRESETS.map((preset, index) => (
               <div
                 key={index}
-                className="cursor-pointer rounded border border-gray-300 p-3 hover:bg-[var(--bg-secondary)]"
+                className="bg-secondary cursor-pointer rounded border border-gray-300 p-3 hover:bg-[var(--bg-button-secondary)]!"
                 role="button"
                 tabIndex={0}
                 onClick={() => applyPreset(preset)}

@@ -13,7 +13,7 @@ type DialogProps = {
 export const Dialog = ({ isOpen, onClose, title, children, className }: DialogProps) => (
   <HeadlessDialog open={isOpen} onClose={onClose} className="relative z-50">
     <DialogBackdrop transition className="fixed inset-0 bg-black/50 duration-300 ease-out data-[closed]:opacity-0" />
-    <div className="fixed inset-0 flex w-screen items-start justify-center p-4 pt-16">
+    <div className="fixed inset-0 flex w-screen items-start justify-center overflow-x-hidden overflow-y-auto p-4 pt-16">
       <DialogPanel
         transition
         className={cn(
