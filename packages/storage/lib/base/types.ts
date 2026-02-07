@@ -66,6 +66,10 @@ export type LanguageStorageType = BaseStorageType<LanguageStateType> & {
   setLanguage: (language: string) => Promise<void>;
 };
 
+// emoji-read-storage.ts
+export type EmojiReadStateType = { enabled: boolean };
+export type EmojiReadStorageType = ToggleStorageType<EmojiReadStateType>;
+
 // log-console-storage.ts
 export type LogConsoleStateType = {
   enabled: boolean;

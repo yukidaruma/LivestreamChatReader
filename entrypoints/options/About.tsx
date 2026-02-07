@@ -30,6 +30,7 @@ const About = () => {
               </li>
             </ul>
           </li>
+          <li>{t('aboutTipTwitchEmote')}</li>
         </ul>
       </div>
 

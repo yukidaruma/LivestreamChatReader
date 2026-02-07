@@ -13,7 +13,12 @@ import {
   waitForElementRemoval,
 } from '@extension/shared/lib/utils';
 import { applyTextFilters } from '@extension/shared/lib/utils/text-filter';
-import { extensionEnabledStorage, speechTemplateStorage, textFilterStorage } from '@extension/storage';
+import {
+  emojiReadStorage,
+  extensionEnabledStorage,
+  speechTemplateStorage,
+  textFilterStorage,
+} from '@extension/storage';
 import type { SiteConfig, SiteId } from '@extension/shared/lib/utils/site-config';
 import type { TextFilter } from '@extension/storage/lib/base';
 
@@ -24,11 +29,13 @@ const createMonitor =
 
     // Subscribe to storage updates
     const cachedValues = {
+      emojiReadEnabled: false as boolean,
       filters: [] as TextFilter[],
       template: DEFAULT_SPEECH_TEMPLATE as string,
     } as const;
     // The `storageValueKey` must match both the name of the value property in storage and the key in `cachedValues`.
     const storageSubscriptions = [
+      { storage: emojiReadStorage, storageValueKey: 'emojiReadEnabled', storageField: 'enabled', default: false },
       { storage: textFilterStorage, storageValueKey: 'filters', default: [] },
       {
         storage: speechTemplateStorage,
@@ -38,13 +45,15 @@ const createMonitor =
     ] as const;
     const storageUnsubscriptionFunctions: Array<() => void> = [];
 
-    for (const { storage, storageValueKey, default: defaultValue } of storageSubscriptions) {
+    for (const sub of storageSubscriptions) {
+      const { storage, storageValueKey, default: defaultValue } = sub;
+      const snapshotKey = 'storageField' in sub ? sub.storageField : storageValueKey;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (cachedValues as any)[storageValueKey] = (storage.getSnapshot() as any)?.[storageValueKey] ?? defaultValue;
+      (cachedValues as any)[storageValueKey] = (storage.getSnapshot() as any)?.[snapshotKey] ?? defaultValue;
 
       const unsubscribe = storage.subscribe(() => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (cachedValues as any)[storageValueKey] = (storage.getSnapshot() as any)?.[storageValueKey] ?? defaultValue;
+        (cachedValues as any)[storageValueKey] = (storage.getSnapshot() as any)?.[snapshotKey] ?? defaultValue;
         logger.debug(`Storage updated (${storageValueKey}): ${cachedValues[storageValueKey]}`);
       });
       storageUnsubscriptionFunctions.push(unsubscribe);
@@ -57,7 +66,8 @@ const createMonitor =
       text: string;
     };
     const extractMessageData = (element: Element): MessageData | null => {
-      const fieldValues = extractFieldValues(element, config);
+      const effectiveConfig = cachedValues.emojiReadEnabled ? config : { ...config, emoji: undefined };
+      const fieldValues = extractFieldValues(element, effectiveConfig);
       const hasContent = Object.values(fieldValues).some(value => value !== '');
       if (!hasContent) return null;
 

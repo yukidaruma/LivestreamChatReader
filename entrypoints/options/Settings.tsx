@@ -9,6 +9,7 @@ import {
   speakText,
 } from '@extension/shared';
 import {
+  emojiReadStorage,
   extensionEnabledStorage,
   languageStorage,
   speechTemplateStorage,
@@ -22,6 +23,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 const Settings = () => {
   const { enabled } = useStorage(extensionEnabledStorage);
+  const { enabled: emojiReadEnabled } = useStorage(emojiReadStorage);
   const { language } = useStorage(languageStorage);
   const { isLight } = useStorage(themeStorage);
   const { rate: storedRate } = useStorage(ttsRateStorage);
@@ -278,6 +280,15 @@ const Settings = () => {
               </p>
             </div>
           </div>
+        </div>
+        <div>
+          <h2>{t('readEmoji')}</h2>
+          <LabeledToggleButton
+            checked={emojiReadEnabled}
+            onChange={emojiReadStorage.toggle}
+            currentState={emojiReadEnabled ? t('enabled') : t('disabled')}
+            description={t('readEmojiDescription')}
+          />
         </div>
       </div>
     </>

@@ -273,6 +273,15 @@
   "aboutTipKeyboardShortcutLink": {
     "message": "ショートカットキーを変更するには、次の Chrome の設定画面を開いてください:"
   },
+  "aboutTipTwitchEmote": {
+    "message": "Twitchのエモートは他のプラットフォームと統一するため、コロンで囲まれた形式に変換されます (例: HeyGuys → :HeyGuys:)。"
+  },
+  "readEmoji": {
+    "message": "絵文字読み上げ"
+  },
+  "readEmojiDescription": {
+    "message": "メッセージ中の絵文字 (例: :thumbsup:、 PogChamp) を読み上げます。"
+  },
   "version": {
     "message": "バージョン"
   }

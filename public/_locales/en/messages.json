@@ -273,6 +273,15 @@
   "aboutTipKeyboardShortcutLink": {
     "message": "To change the shortcut key, open the following Chrome settings page:"
   },
+  "aboutTipTwitchEmote": {
+    "message": "Twitch emotes are treated as colon-wrapped format (e.g. HeyGuys → :HeyGuys:) for consistency with other platforms."
+  },
+  "readEmoji": {
+    "message": "Read Emojis"
+  },
+  "readEmojiDescription": {
+    "message": "Read emojis (e.g. :thumbsup: or PogChamp) in chat messages."
+  },
   "version": {
     "message": "Version"
   }

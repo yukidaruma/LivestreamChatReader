@@ -1,3 +1,4 @@
+export * from './emoji-read-storage';
 export * from './extension-enabled-storage';
 export * from './language-storage';
 export * from './log-console-storage';
