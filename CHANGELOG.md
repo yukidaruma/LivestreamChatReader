@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.4.0 (2026-02-07)
+### Added
+- Add "Read Emojis" setting
+### Fixed
+- Filter target not reflecting selected option
+
 ## 2.3.0 (2025-09-28)
 ### Added
 - Add "notify" filter command
@@ -25,8 +31,7 @@
 - "Speech Rate" setting
 - "Changelog" section to Settings page
 ### Changed
-- Use [Bun](https://bun.com) and [WXT](https://wxt.dev) for development  
-  This change reduced extension size by 80% (688 kB => 137 kB), with the added features included.
+- Use [Bun](https://bun.com) and [WXT](https://wxt.dev) for development. This change reduced extension size by 80% (688 kB => 137 kB), with the added features included.
 ### Fixed
 - Background color not being applied when scrolling Settings page
 
