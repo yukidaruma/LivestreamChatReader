@@ -171,6 +171,12 @@
   "presetUrlToLinkDescription": {
     "message": "Replaces URLs with the word 'link' when reading aloud."
   },
+  "presetMuteEmojiOnly": {
+    "message": "Mute emoji-only messages"
+  },
+  "presetMuteEmojiOnlyDescription": {
+    "message": "Mutes messages that contain only emojis."
+  },
   "presetLimitLength": {
     "message": "Limit message length to 20 characters"
   },

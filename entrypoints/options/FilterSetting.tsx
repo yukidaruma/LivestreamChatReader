@@ -69,6 +69,19 @@ const FILTER_PRESETS: FilterPreset[] = [
     },
   },
   {
+    name: t('presetMuteEmojiOnly'),
+    description: t('presetMuteEmojiOnlyDescription'),
+    filter: {
+      enabled: true,
+      type: 'command',
+      command: 'mute',
+      target: 'field',
+      fieldName: 'body',
+      pattern: '^(:[^:]+:\\s*)+$',
+      isRegex: true,
+    },
+  },
+  {
     name: t('presetLimitLength'),
     description: t('presetLimitLengthDescription'),
     filter: {

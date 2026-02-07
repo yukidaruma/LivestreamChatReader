@@ -171,6 +171,12 @@
   "presetUrlToLinkDescription": {
     "message": "URLを「リンク」という言葉に置き換えて読み上げます。"
   },
+  "presetMuteEmojiOnly": {
+    "message": "絵文字のみのメッセージをミュート"
+  },
+  "presetMuteEmojiOnlyDescription": {
+    "message": "絵文字のみで構成されたメッセージをミュートします。"
+  },
   "presetLimitLength": {
     "message": "メッセージ長を20文字に制限"
   },
