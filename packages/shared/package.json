@@ -7,7 +7,7 @@
   "types": "index.mts",
   "main": "index.mts",
   "dependencies": {
-    "react-error-boundary": "^6.0.0"
+    "react-error-boundary": "^6.1.1"
   },
   "devDependencies": {
     "@extension/storage": "workspace:*"
