@@ -16,6 +16,6 @@
   },
   "devDependencies": {
     "react-spinners": "^0.17.0",
-    "tsc-alias": "^1.8.16"
+    "tsc-alias": "^1.8.17"
   }
 }
