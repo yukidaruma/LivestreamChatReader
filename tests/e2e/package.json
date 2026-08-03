@@ -5,9 +5,9 @@
   "sideEffects": false,
   "type": "module",
   "devDependencies": {
-    "@playwright/test": "^1.55.0",
-    "@types/chrome-remote-interface": "^0.31.14",
-    "chrome-remote-interface": "^0.33.3",
-    "playwright": "^1.55.0"
+    "@playwright/test": "^1.62.1",
+    "@types/chrome-remote-interface": "^0.34.0",
+    "chrome-remote-interface": "^0.34.0",
+    "playwright": "^1.62.1"
   }
 }
